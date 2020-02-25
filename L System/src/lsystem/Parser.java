@@ -45,7 +45,7 @@ public class Parser
 	private String variablesInput;
 	private String axiomInput;
 	
-	private HashMap<String, LinkedList<Action>> actionMap;
+	private HashMap<Symbol, LinkedList<Action>> actionMap;
 	
 	public Parser(String rulesInput, String constantsInput, String variablesInput, String axiomInput)
 	{
@@ -56,20 +56,20 @@ public class Parser
 		this.keyWords = KEYWORDS;
 		constants = new Dictionary<String>();
 		variables = new Dictionary<String>();
-		actionMap = new HashMap<String, LinkedList<Action>>();
+		actionMap = new HashMap<Symbol, LinkedList<Action>>();
 	}
 	
 	//axiom = constant axiom
 	//axiom = variable axiom
 	//axiom = constant
 	//axiom = variable
-	private LinkedList<String> parseAxiom()
+	private LinkedList<Symbol> parseAxiom()
 	{
 		Token t = lexer.getToken();
-		LinkedList<String> axiom = new LinkedList<String>();
+		LinkedList<Symbol> axiom = new LinkedList<Symbol>();
 		if(t.type == TokenType.CONSTANT || t.type == TokenType.VARIABLE)
 		{
-			axiom.add(t.lexeme);
+			axiom.add(new Symbol(t.lexeme));
 			t = lexer.peek();
 			if(t.type == TokenType.CONSTANT || t.type == TokenType.VARIABLE)
 				axiom.addAll(parseAxiom());
@@ -110,7 +110,7 @@ public class Parser
 		if(constants.contains(t.lexeme))
 			throw new Error("Error, the constant '" + t.lexeme + "' is declared more than once.");
 		constants.add(t.lexeme);
-		actionMap.put(t.lexeme, actions);
+		actionMap.put(new Symbol(t.lexeme), actions);
 	}
 	
 	//variables = variable COMMA variables
@@ -144,7 +144,7 @@ public class Parser
 		if(variables.contains(t.lexeme))
 			throw new Error("Error, the variable '" + t.lexeme + "' is declared more than once.");
 		variables.add(t.lexeme);
-		actionMap.put(t.lexeme, actions);
+		actionMap.put(new Symbol(t.lexeme), actions);
 	}
 	
 	//ActionList = Action, ActionList
@@ -203,10 +203,10 @@ public class Parser
 		lexer = new LexicalAnalyzer(rulesInput, constants, variables, keyWords);
 		Grammar grammar = parseGrammar();
 		lexer = new LexicalAnalyzer(axiomInput, constants, variables, keyWords);
-		LinkedList<String> axiom = parseAxiom();	
+		LinkedList<Symbol> axiom = parseAxiom();	
 		
-		Set<String> keySet = actionMap.keySet();
-		for(String key : keySet)
+		Set<Symbol> keySet = actionMap.keySet();
+		for(Symbol key : keySet)
 			System.out.println(key + "\t\t" + actionMap.get(key));
 		
 		return new LSystem(grammar, axiom, n, origin, initial);
@@ -237,7 +237,7 @@ public class Parser
 	{
 		Token t = lexer.expect(TokenType.VARIABLE);
 		ProductionRule rule = new ProductionRule();
-		rule.variable = t.lexeme;
+		rule.variable = new Symbol(t.lexeme);
 		lexer.expect(TokenType.EQUALS);
 		rule.sequence = parseRightHandSide();
 		lexer.expect(TokenType.SEMICOLON);
@@ -248,13 +248,13 @@ public class Parser
 	//RightHandSide = VARIABLE RightHandSide
 	//RightHandSide = CONSTANT
 	//RightHandSide = VARIABLE
-	private LinkedList<String> parseRightHandSide()
+	private LinkedList<Symbol> parseRightHandSide()
 	{
 		Token t = lexer.getToken();
-		LinkedList<String> RHS = new LinkedList<String>();
+		LinkedList<Symbol> RHS = new LinkedList<Symbol>();
 		if(t.type == TokenType.CONSTANT || t.type == TokenType.VARIABLE)
 		{
-			RHS.add(t.lexeme);
+			RHS.add(new Symbol(t.lexeme));
 			t = lexer.peek();
 			if(t.type == TokenType.CONSTANT || t.type == TokenType.VARIABLE)
 				RHS.addAll(parseRightHandSide());

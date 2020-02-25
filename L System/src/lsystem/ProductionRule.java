@@ -4,10 +4,10 @@ import java.util.LinkedList;
 
 public class ProductionRule
 {
-	public String variable;
-	public LinkedList<String> sequence;
+	public Symbol variable;
+	public LinkedList<Symbol> sequence;
 	
-	public ProductionRule(String variable, LinkedList<String> sequence)
+	public ProductionRule(Symbol variable, LinkedList<Symbol> sequence)
 	{
 		this.variable = variable;
 		this.sequence = sequence;
@@ -15,13 +15,13 @@ public class ProductionRule
 	
 	public ProductionRule()
 	{
-		this("", null);
+		this(null, null);
 	}
 	
 	private String getSequenceString()
 	{
 		String str = "";
-		for(String s : sequence)
+		for(Symbol s : sequence)
 			str += s + " ";
 		if(str.length() > 1)
 			str = str.substring(0, str.length() - 1);

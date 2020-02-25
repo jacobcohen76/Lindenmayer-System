@@ -15,7 +15,7 @@ import lsystem.cartesian2d.Vector;
 public class LSystem
 {
 	private Grammar grammar;
-	private LinkedList<String> axiom;
+	private LinkedList<Symbol> axiom;
 	private int n;
 	
 	private Stack<Point> positionStack;
@@ -27,7 +27,7 @@ public class LSystem
 	
 	private LinkedList<LineSegment> lines;
 	
-	public LSystem(Grammar grammar, LinkedList<String> axiom, int n, Point origin, Vector initial)
+	public LSystem(Grammar grammar, LinkedList<Symbol> axiom, int n, Point origin, Vector initial)
 	{
 		this.grammar = grammar;
 		this.axiom = axiom;
@@ -45,19 +45,19 @@ public class LSystem
 	
 	public void generate()
 	{
-		LinkedList<String> production = axiom;
+		LinkedList<Symbol> production = axiom;
 		for(int i = 0; i < n; i++)
 			production = grammar.getReplacement(production);
 		perform(production);
 	}
 	
-	private void perform(LinkedList<String> axiom)
+	private void perform(LinkedList<Symbol> axiom)
 	{
-		for(String symbol : axiom)
+		for(Symbol symbol : axiom)
 			perform(symbol);
 	}
 	
-	private void perform(String symbol)
+	private void perform(Symbol symbol)
 	{
 		LinkedList<Action> actions = grammar.getActions(symbol);
 		for(Action action : actions)

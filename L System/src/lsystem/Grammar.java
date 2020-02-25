@@ -8,13 +8,13 @@ import lsystem.parser.lexicalanalysis.Dictionary;
 
 public class Grammar
 {
-	private HashMap<String, LinkedList<Action>> actionMap;
-	private HashMap<String, LinkedList<String>> replacementMap;
+	private HashMap<Symbol, LinkedList<Action>> actionMap;
+	private HashMap<Symbol, LinkedList<Symbol>> replacementMap;
 	
-	public Grammar(LinkedList<ProductionRule> RuleList, HashMap<String, LinkedList<Action>> actionMap, Dictionary<String> constants, Dictionary<String> variables)
+	public Grammar(LinkedList<ProductionRule> RuleList, HashMap<Symbol, LinkedList<Action>> actionMap, Dictionary<String> constants, Dictionary<String> variables)
 	{
 		this.actionMap = actionMap;
-		replacementMap = new HashMap<String, LinkedList<String>>();
+		replacementMap = new HashMap<Symbol, LinkedList<Symbol>>();
 		
 		for(ProductionRule rule : RuleList)
 			if(replacementMap.containsKey(rule.variable))
@@ -25,26 +25,26 @@ public class Grammar
 		
 		for(String constant : constants)
 		{
-			LinkedList<String> replacement = new LinkedList<String>();
-			replacement.add(constant);
-			replacementMap.put(constant, replacement);
+			LinkedList<Symbol> replacement = new LinkedList<Symbol>();
+			replacement.add(new Symbol(constant));
+			replacementMap.put(replacement.peek(), replacement);
 		}
 	}
 	
-	public LinkedList<Action> getActions(String symbol)
+	public LinkedList<Action> getActions(Symbol symbol)
 	{
 		return actionMap.get(symbol);
 	}
 	
-	public LinkedList<String> getReplacement(LinkedList<String> axiom)
+	public LinkedList<Symbol> getReplacement(LinkedList<Symbol> axiom)
 	{
-		LinkedList<String> replacement = new LinkedList<String>();
-		for(String symbol : axiom)
+		LinkedList<Symbol> replacement = new LinkedList<Symbol>();
+		for(Symbol symbol : axiom)
 			replacement.addAll(getReplacement(symbol));
 		return replacement;
 	}
 	
-	private LinkedList<String> getReplacement(String symbol)
+	private LinkedList<Symbol> getReplacement(Symbol symbol)
 	{
 		return replacementMap.get(symbol);
 	}
