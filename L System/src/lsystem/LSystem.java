@@ -1,5 +1,6 @@
 package lsystem;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -169,18 +170,21 @@ public class LSystem
 		return (int) max + 2;
 	}
 	
-	private void render(BufferedImage image, int xShift, int yShift)
+	private void render(BufferedImage image, int xShift, int yShift, float thickness, Color foreground, Color background)
 	{
 		Graphics2D g = image.createGraphics();
-		g.setColor(Color.BLUE);
+		g.setColor(background);
+		g.fillRect(0, 0, image.getWidth(), image.getHeight());
+		g.setColor(foreground);
+		g.setStroke(new BasicStroke(thickness));
 		for(LineSegment line : lines)
 			line.render(g, xShift, yShift);
 	}
 	
-	public BufferedImage getImage()
+	public BufferedImage getImage(float thickness, Color foreground, Color background)
 	{
 		BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-		render(image, getXShift(), getYShift());
+		render(image, getXShift(), getYShift(), thickness, foreground, background);
 		return image;
 	}
 }

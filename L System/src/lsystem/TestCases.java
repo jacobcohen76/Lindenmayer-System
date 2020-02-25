@@ -1,5 +1,7 @@
 package lsystem;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -10,16 +12,21 @@ import lsystem.cartesian2d.Vector;
 
 public class TestCases
 {
-	public static int NUMGENERATIONS = 7;
+	public static int NUMGENERATIONS = 22;
 	public static Point ORIGIN = new Point(0, 0);
-	public static Vector INITIAL = new Vector(-2, 1);
+	public static Vector INITIAL = new Vector(0, 1);
+	
+	public static float THICKNESS = 1.0f;
+	public static Color FOREGROUND = Color.CYAN;
+	public static Color BACKGROUND = Color.DARK_GRAY;
 	
 	public static void main(String args[]) throws IOException
 	{
-		LSystem system = FractalPlant();
+		LSystem system = DragonCurve();
 		system.generate();
 		File output = new File("D:\\output.png");
-		ImageIO.write(system.getImage(), "png", output);
+		BufferedImage image = system.getImage(THICKNESS, FOREGROUND, BACKGROUND);
+		ImageIO.write(image , "png", output);
 	}
 	
 	public static LSystem FractalPlant()
