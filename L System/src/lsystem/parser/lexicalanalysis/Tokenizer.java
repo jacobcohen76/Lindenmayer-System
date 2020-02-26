@@ -95,9 +95,11 @@ public class Tokenizer
 		
 		for(int i = 0; i < vars.length; i++)
 			for(int j = i + 1; j < vars.length; j++)
-				if(((String) vars[i]).contains((CharSequence) vars[j]))
+				if(i == j)
+				{}
+				else if(((String) vars[i]).contains((String) vars[j]))
 					substrPairs.add(vars[i] + "\t" + vars[j]);
-				else if(((String) vars[j]).contains((CharSequence) vars[i]))
+				else if(((String) vars[j]).contains((String) vars[i]))
 					substrPairs.add(vars[j] + "\t" + vars[i]);
 		
 		if(substrPairs.size() > 0)

@@ -17,7 +17,7 @@ public class TestCases
 	public static Vector INITIAL = new Vector(0, 1);
 	
 	public static float THICKNESS = 1.0f;
-	public static Color FOREGROUND = Color.RED;
+	public static Color FOREGROUND = Color.GREEN;
 	public static Color BACKGROUND = Color.BLACK;
 	
 	public static void main(String args[]) throws IOException
@@ -92,7 +92,7 @@ public class TestCases
 	public static LSystem FractalBinaryTree()
 	{
 		String constantInputs = "[(PUSHPOS, PUSHDIR, RCCW 0.7853981634), ](POPPOS, POPDIR, RCW 0.7853981634)";
-		String variableInputs = "A(MVFWD 5, DRAWLINE), B(MVFWD 5, DRAWLINE)";
+		String variableInputs = "A(MVFWD 2, DRAWLINE), B(MVFWD 5, DRAWLINE)";
 		String axiomInput = "A";
 		String ruleInput = "B=BB;A=B[A]A;";
 		
