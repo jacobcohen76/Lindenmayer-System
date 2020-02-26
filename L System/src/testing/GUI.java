@@ -437,7 +437,8 @@ public class GUI extends javax.swing.JFrame {
     		if(selected != null)
     		{
 	    		Thread thread = new SaveImage(selected);
-	    		thread.setPriority(Thread.MAX_PRIORITY);
+//	    		thread.setPriority(Thread.);
+//	    		thread.setPriority(Thread.MAX_PRIORITY);
 	    		service.execute(thread);
     		}
     	}
