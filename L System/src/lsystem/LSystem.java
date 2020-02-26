@@ -21,6 +21,9 @@ public class LSystem
 	private Stack<Point> positionStack;
 	private Stack<Vector> directionStack;
 	
+	private Point origin;
+	private Vector initial;
+	
 	private Point prev;
 	private Point current;
 	private Vector direction;
@@ -37,8 +40,12 @@ public class LSystem
 		directionStack = new Stack<Vector>();
 		
 		prev = null;
-		current = origin;
-		direction = initial.normalize();
+		
+		this.origin = origin;
+		this.initial = initial.normalize();
+		
+		current = this.origin.clone();
+		direction = this.initial.clone();
 		
 		lines = new LinkedList<LineSegment>();
 	}
@@ -185,6 +192,16 @@ public class LSystem
 	{
 		BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 		render(image, getXShift(), getYShift(), thickness, foreground, background);
+		lines.clear();
+		current = origin.clone();
+		direction = initial.clone();
+		positionStack.clear();
+		directionStack.clear();
 		return image;
+	}
+
+	public void setN(int numGenerations)
+	{
+		n = numGenerations;
 	}
 }

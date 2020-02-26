@@ -1,7 +1,6 @@
 package lsystem;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Set;
 
 import lsystem.actions.Action;
 import lsystem.actions.DrawLine;
@@ -47,6 +46,8 @@ public class Parser
 	
 	private HashMap<Symbol, LinkedList<Action>> actionMap;
 	
+	private String currentlyParsing;
+	
 	public Parser(String rulesInput, String constantsInput, String variablesInput, String axiomInput)
 	{
 		this.rulesInput = rulesInput;
@@ -75,13 +76,14 @@ public class Parser
 				axiom.addAll(parseAxiom());
 		}
 		else
-			throw new Error("Error, expected token of type 'CONSTANT', or 'VARIABLE', got '" + t.type + "' with lexeme of '" + t.lexeme + "'.");
+			throw new Error("Error, expected token of type 'CONSTANT',"
+					+ " or 'VARIABLE', got '" + t.type + "' with lexeme of '" + t.lexeme + "'.");
 		return axiom;
 	}
 	
 	//constants = constant COMMA constants
 	//constants = constant
-	//constants = EOI
+	//constants = 
 	private void parseConstants()
 	{
 		if(lexer.peek().type != TokenType.EOI)
@@ -142,7 +144,8 @@ public class Parser
 			lexer.expect(TokenType.RPAREN);
 		}
 		if(variables.contains(t.lexeme))
-			throw new Error("Error, the variable '" + t.lexeme + "' is declared more than once.");
+			throw new Error("Error, the variable"
+					+ " '" + t.lexeme + "' is declared more than once.");
 		variables.add(t.lexeme);
 		actionMap.put(new Symbol(t.lexeme), actions);
 	}
@@ -196,23 +199,45 @@ public class Parser
 	
 	public LSystem parseLSystem(int n, Point origin, Vector initial)
 	{
-		lexer = new LexicalAnalyzer(constantsInput, keyWords);
-		parseConstants();
-		lexer = new LexicalAnalyzer(variablesInput, keyWords);
-		parseVariables();
-		lexer = new LexicalAnalyzer(rulesInput, constants, variables, keyWords);
-		Grammar grammar = parseGrammar();
-		lexer = new LexicalAnalyzer(axiomInput, constants, variables, keyWords);
-		LinkedList<Symbol> axiom = parseAxiom();	
+		if(constantsInput.equals("") && variablesInput.equals(""))
+		{
+			throw new Error("Error, no constants or variables are declared in this L-System. Declare variables and constants in the corresponding input fields."
+					+ "\n\nFor examples of how to do this, click File -> Load Presets, and then select one of the predefined L-Systems from this list."
+					+ "\n\nThe predefined L-Systems in this list come with"
+					+ " an example of properly defined syntax, and show how to use 'Actions' to produce meaningful and fascinating images as outputs.");
+		}
 		
-		Set<Symbol> keySet = actionMap.keySet();
-		for(Symbol key : keySet)
-			System.out.println(key + "\t\t" + actionMap.get(key));
-		
-		return new LSystem(grammar, axiom, n, origin, initial);
+		try
+		{
+			currentlyParsing = "Constants";
+			lexer = new LexicalAnalyzer(constantsInput, keyWords);
+			parseConstants();
+			
+			currentlyParsing = "Variables";
+			lexer = new LexicalAnalyzer(variablesInput, keyWords);
+			parseVariables();
+			
+			currentlyParsing = "Rules";
+			lexer = new LexicalAnalyzer(rulesInput, constants, variables, keyWords);
+			Grammar grammar = parseGrammar();
+			
+			currentlyParsing = "Axiom";
+			lexer = new LexicalAnalyzer(axiomInput, constants, variables, keyWords);
+			LinkedList<Symbol> axiom = parseAxiom();
+			
+			return new LSystem(grammar, axiom, n, origin, initial);
+		}
+		catch(Exception ex)
+		{
+			throw new Error("An Error occurred in the " + currentlyParsing + " input field.\n\n" + ex.getMessage());
+		}
+		catch(Error e)
+		{
+			throw new Error("An Error occurred in the " + currentlyParsing + " input field.\n\n" + e.getMessage());
+		}
 	}
 	
-	//Grammar = RuleList EOI
+	//Grammar = RuleList
 	private Grammar parseGrammar()
 	{		
 		LinkedList<ProductionRule> RuleList = parseRuleList();
@@ -260,7 +285,9 @@ public class Parser
 				RHS.addAll(parseRightHandSide());
 		}
 		else
-			throw new Error("Syntax Error");
+			throw new Error("expected "
+					+ "a token of type CONSTANT, or VARIABLE, instead got a token of type " + t.type
+					+ " with lexeme of '" + t.lexeme + "' at line " + t.line_no + ".");
 		return RHS;
 	}
 }
