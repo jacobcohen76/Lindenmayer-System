@@ -10,6 +10,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.imageio.ImageIO;
 import javax.swing.JColorChooser;
@@ -417,6 +419,7 @@ public class GUI extends javax.swing.JFrame {
     }
     
     private BufferedImage image = null;
+    private ExecutorService service = Executors.newFixedThreadPool(1);
     private void saveAsActionPerformed(java.awt.event.ActionEvent evt) {                                       
         // TODO add your handling code here:
     	if(system == null)
@@ -433,19 +436,36 @@ public class GUI extends javax.swing.JFrame {
     		
     		if(selected != null)
     		{
-	    		try {
-	    			system.setN(getNumGenerations());
-	    			system.generate();
-	    			image = system.getImage(thickness, foregroundColor, backgroundColor);
-					ImageIO.write(image , "png", selected);
-					display("Successfuly saved to '" + selected.getPath() + "'.", SUCCESS);
-				} catch (IOException e) {
-					display(e.getMessage(), FAILURE);
-				}
-	    		catch (Error e)
-	    		{
-	    			display(e.getMessage(), FAILURE);
-	    		}
+	    		Thread thread = new SaveImage(selected);
+	    		thread.setPriority(Thread.MAX_PRIORITY);
+	    		service.execute(thread);
+    		}
+    	}
+    }
+    
+    private class SaveImage extends Thread
+    {
+    	private File selected;
+    	
+    	public SaveImage(File selected)
+    	{
+    		this.selected = selected;
+    	}
+    	
+    	public void run()
+    	{
+    		try {
+    			system.setN(getNumGenerations());
+    			system.generate();
+    			image = system.getImage(thickness, foregroundColor, backgroundColor);
+				ImageIO.write(image , "png", selected);
+				display("Successfuly saved to '" + selected.getPath() + "'.", SUCCESS);
+			} catch (IOException e) {
+				display(e.getMessage(), FAILURE);
+			}
+    		catch (Error e)
+    		{
+    			display(e.getMessage(), FAILURE);
     		}
     	}
     }
@@ -645,28 +665,28 @@ public class GUI extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
