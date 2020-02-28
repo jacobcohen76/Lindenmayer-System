@@ -48,10 +48,10 @@ public class LineSegment extends Line
 	
 	public void render(Graphics2D g, int xShift, int yShift)
 	{
-		int x1 = (int) (a.x - xShift);
-		int y1 = (int) (yShift - a.y);
-		int x2 = (int) (b.x - xShift);
-		int y2 = (int) (yShift - b.y);
+		int x1 = (int) Math.round(a.x - xShift);
+		int y1 = (int) Math.round(yShift - a.y);
+		int x2 = (int) Math.round(b.x - xShift);
+		int y2 = (int) Math.round(yShift - b.y);
 		g.drawLine(x1, y1, x2, y2);
 	}
 
