@@ -11,6 +11,7 @@ import lsystem.actions.Action;
 import lsystem.cartesian2d.LineSegment;
 import lsystem.cartesian2d.Point;
 import lsystem.cartesian2d.Vector;
+import lsystem.gui.animations.AnimationPanel;
 
 public class LSystem
 {
@@ -56,6 +57,11 @@ public class LSystem
 		for(int i = 0; i < n; i++)
 			production = grammar.getReplacement(production);
 		perform(production);
+	}
+	
+	public void animate(AnimationPanel panel)
+	{
+		
 	}
 	
 	private void perform(LinkedList<Symbol> axiom)

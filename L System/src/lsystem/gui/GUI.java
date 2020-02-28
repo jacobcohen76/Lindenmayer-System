@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package testing;
+package lsystem.gui;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -601,7 +601,6 @@ public class GUI extends javax.swing.JFrame {
     private Color FAILURE = new Color(0x800000);
     
     private void buildButtonActionPerformed(java.awt.event.ActionEvent evt) {                                            
-        // TODO add your handling code here:
     	try
     	{
     		String constantsInput = constantsInputArea.getText(); 
@@ -685,7 +684,7 @@ public class GUI extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }

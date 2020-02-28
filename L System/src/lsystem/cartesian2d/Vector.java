@@ -87,10 +87,7 @@ public class Vector implements Cloneable
 	
 	public static double getAngleBetween(Vector u, Vector v)
 	{
-		double radians;
-		radians = Vector.dot(u, v);
-		radians /= Vector.dot(u, u) * Vector.dot(v, v);		
-		return Math.acos(radians);
+		return Math.atan2(u.i, u.j) - Math.atan2(v.i, v.j);
 	}
 	
 	public static Vector proj(Vector v, Vector a)
