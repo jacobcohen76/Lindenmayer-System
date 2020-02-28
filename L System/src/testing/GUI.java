@@ -609,9 +609,6 @@ public class GUI extends javax.swing.JFrame {
     		String axiomInput = axiomInputArea.getText();
     		String rulesInput = rulesInputArea.getText();
     		
-    		System.out.println(constantsInput);
-    		System.out.println(variablesInput);
-    		
     		Parser parser = new Parser(rulesInput, constantsInput, variablesInput, axiomInput);
     		system = parser.parseLSystem(5, origin, getVectorFromInput());
     		display("Success, your LSystem has been created, now generate an image by going to File -> Save As, and then saving your image to your desired location.", SUCCESS);
