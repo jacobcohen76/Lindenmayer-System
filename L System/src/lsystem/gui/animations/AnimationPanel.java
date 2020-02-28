@@ -1,9 +1,12 @@
 package lsystem.gui.animations;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.LinkedList;
 
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 import lsystem.LSystem;
@@ -15,12 +18,57 @@ public class AnimationPanel extends JPanel
 {
 	private static final long serialVersionUID = -923820469380884849L;
 	
+	private static final int RADIUS = 4;
+	private static final int LENGTH = 75;
+	
+	private static final Color POINTA = Color.RED;
+	private static final Color POINTB = Color.BLUE;
+	private static final Color VECTOR = new Color(0xFF7F50);
+	
 	private Point pos;
 	private Vector dir;
 	
-	public AnimationPanel(LSystem system)
+	private BorderLayout layout;
+	private JLayeredPane layers;
+	
+	private MovementPanel movementPanel;
+	private LinePanel linePanel;
+	
+	public AnimationPanel(LSystem system, Dimension size, int shiftX, int shiftY)
 	{
+		layout = new BorderLayout();
+		this.setLayout(layout);
 		
+		layers = new JLayeredPane();
+		layers.setPreferredSize(size);
+		layers.setLayout(new BorderLayout());
+		
+		System.out.println(layers.getPreferredSize());
+		
+		Point origin = new Point(0, 0);
+		Vector direction = new Vector(1, 0);
+		
+		Color foreground = Color.GREEN;
+		Color background = Color.BLACK;
+		
+		movementPanel = new MovementPanel(RADIUS, LENGTH, shiftX, shiftY, POINTA, POINTB, VECTOR, foreground, origin, direction);
+		movementPanel.setPreferredSize(size);
+		
+		linePanel = new LinePanel(foreground, background, shiftX, shiftY);
+		linePanel.setPreferredSize(size);
+//		linePanel.setSize(size);
+//		
+//		this.add(linePanel);
+		this.add(layers, BorderLayout.CENTER);
+		
+		layers.add(linePanel);
+		layers.add(movementPanel);
+		
+		System.out.println(layers.getPreferredSize());
+		
+//		layers.add(linePanel, new Integer(0));
+//		layers.add(movementPanel, new Integer(1));
+//		layers.add(movementPanel, 1);
 	}
 	
 	private void perform(LinkedList<Action> actions)
@@ -29,23 +77,6 @@ public class AnimationPanel extends JPanel
 	}
 	
 	private void perform(Action action)
-	{
-		
-	}
-	
-	private void renderPoint(Graphics g, Point pos, int radius, int shiftX, int shiftY, Color c)
-	{
-		int x = (int) Math.round(pos.x - shiftX - radius);
-		int y = (int) Math.round(shiftY - radius - pos.y);
-		g.fillOval(x, y, 2 * radius, 2 * radius);
-	}
-	
-	private void moveTo(Point destination)
-	{
-		
-	}
-	
-	public static void main(String args[])
 	{
 		
 	}

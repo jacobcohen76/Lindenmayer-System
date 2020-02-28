@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import lsystem.cartesian2d.Point;
 import lsystem.cartesian2d.Vector;
 
-public class PointPanel extends JPanel
+public class MovementPanel extends JPanel
 {
 	private static final long serialVersionUID = -408764710346055893L;
 	private static int INTERVAL = 1;
@@ -27,9 +27,10 @@ public class PointPanel extends JPanel
 	private int shiftX;
 	private int shiftY;
 	
-	public PointPanel(int radius, int length, int shiftX, int shiftY, Color A, Color B, Color C, Color D, Point origin, Vector direction)
+	public MovementPanel(int radius, int length, int shiftX, int shiftY, Color A, Color B, Color C, Color D, Point origin, Vector direction)
 	{
 		this.setOpaque(false);
+		this.setBackground(new Color(0, 0, 0, 0));
 		this.radius = radius;
 		this.length = length;
 		this.shiftX = shiftX;
