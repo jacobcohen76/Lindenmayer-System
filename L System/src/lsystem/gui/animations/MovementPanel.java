@@ -2,9 +2,11 @@ package lsystem.gui.animations;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+import lsystem.cartesian2d.LineSegment;
 import lsystem.cartesian2d.Point;
 import lsystem.cartesian2d.Vector;
 
@@ -12,7 +14,7 @@ public class MovementPanel extends JPanel
 {
 	private static final long serialVersionUID = -408764710346055893L;
 	private static int INTERVAL = 1;
-	private static int FRAMES = 200;
+	private static int FRAMES = 50;
 	
 	private Point current;
 	private Point prev;
@@ -30,7 +32,7 @@ public class MovementPanel extends JPanel
 	public MovementPanel(int radius, int length, int shiftX, int shiftY, Color A, Color B, Color C, Color D, Point origin, Vector direction)
 	{
 		this.setOpaque(false);
-		this.setBackground(new Color(0, 0, 0, 0));
+		
 		this.radius = radius;
 		this.length = length;
 		this.shiftX = shiftX;
@@ -49,10 +51,14 @@ public class MovementPanel extends JPanel
 	
 	public void paint(Graphics g)
 	{
+		Graphics2D g2D = (Graphics2D) g;
+		g2D.setBackground(new Color(0, 0, 0, 0));
+		g2D.clearRect(0, 0, getWidth(), getHeight());
+		
 		if(renderingLine)
-			render(g, prev, increment, D, shiftX, shiftY);		
-		render(g, current, A, shiftX, shiftY, radius);
+			render(g, prev, increment, D, shiftX, shiftY);
 		render(g, prev, B, shiftX, shiftY, radius);
+		render(g, current, A, shiftX, shiftY, radius);
 		render(g, current, direction, C, shiftX, shiftY, length);
 	}
 	
@@ -92,6 +98,12 @@ public class MovementPanel extends JPanel
 		}
 	}
 	
+	public void rotateTo(double radians, Vector transformation)
+	{
+		transformation = transformation.normalize();
+		rotate(radians, direction, transformation, FRAMES, INTERVAL);
+	}
+	
 	public void rotateTo(Vector transformation)
 	{
 		transformation = transformation.normalize();
@@ -121,6 +133,11 @@ public class MovementPanel extends JPanel
 			}
 			try { Thread.sleep(interval); } catch(Exception ex) { }
 		}
+	}
+	
+	public LineSegment getLine()
+	{
+		return new LineSegment(prev.clone(), current.clone());
 	}
 	
 	private void move(Point prev, Point current, Point destination, int frames, int interval)

@@ -15,4 +15,9 @@ public class RotateCCW implements Action
 	{
 		system.rotateCCW(radians);
 	}
+	
+	public String toString()
+	{
+		return "RCCW " + radians;
+	}
 }

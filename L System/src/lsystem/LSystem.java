@@ -11,11 +11,12 @@ import lsystem.actions.Action;
 import lsystem.cartesian2d.LineSegment;
 import lsystem.cartesian2d.Point;
 import lsystem.cartesian2d.Vector;
+import lsystem.gui.animations.AnimationFrame;
 import lsystem.gui.animations.AnimationPanel;
 
 public class LSystem
 {
-	private Grammar grammar;
+	public Grammar grammar;
 	private LinkedList<Symbol> axiom;
 	private int n;
 	
@@ -26,8 +27,8 @@ public class LSystem
 	private Vector initial;
 	
 	private Point prev;
-	private Point current;
-	private Vector direction;
+	public Point current;
+	public Vector direction;
 	
 	private LinkedList<LineSegment> lines;
 	
@@ -53,21 +54,42 @@ public class LSystem
 	
 	public void generate()
 	{
+		perform(getReplacement());
+	}
+	
+	public LinkedList<Symbol> getReplacement()
+	{
 		LinkedList<Symbol> production = axiom;
 		for(int i = 0; i < n; i++)
 			production = grammar.getReplacement(production);
-		perform(production);
+		return production;
 	}
 	
-	public void animate(AnimationPanel panel)
+	public void animate(Color foreground, Color background)
 	{
+		LinkedList<Symbol> replacement = getReplacement();
+		perform(replacement);
 		
+		int width = getWidth();
+		int height = getHeight();
+		int xShift = getXShift();
+		int yShift = getYShift();
+		
+		AnimationPanel animationPanel = new AnimationPanel(origin, initial, foreground, background, width, height, xShift, yShift);
+		AnimationFrame animationFrame = new AnimationFrame(animationPanel, this, replacement, Color.BLACK, Color.WHITE, Color.YELLOW);
+		
+		animationFrame.play();
 	}
 	
 	private void perform(LinkedList<Symbol> axiom)
 	{
 		for(Symbol symbol : axiom)
 			perform(symbol);
+	}
+	
+	public LinkedList<Action> getActions(Symbol symbol)
+	{
+		return grammar.getActions(symbol);
 	}
 	
 	private void perform(Symbol symbol)
@@ -152,7 +174,7 @@ public class LSystem
 			min = min(min, line.a.x, line.b.x);
 			max = max(max, line.a.x, line.b.x);
 		}
-		return (int) (max - min) + 4;
+		return (int) (max - min) + 6;
 	}
 	
 	private int getHeight()
@@ -164,7 +186,7 @@ public class LSystem
 			min = min(min, line.a.y, line.b.y);
 			max = max(max, line.a.y, line.b.y);
 		}
-		return (int) (max - min) + 4;
+		return (int) (max - min) + 6;
 	}
 	
 	private int getXShift()
@@ -172,7 +194,7 @@ public class LSystem
 		double min = Double.POSITIVE_INFINITY;
 		for(LineSegment line : lines)
 			min = min(min, line.a.x, line.b.x);
-		return (int) min + 2;
+		return (int) min - 3;
 	}
 	
 	private int getYShift()
@@ -180,7 +202,7 @@ public class LSystem
 		double max = Double.NEGATIVE_INFINITY;
 		for(LineSegment line : lines)
 			max = max(max, line.a.y, line.b.y);
-		return (int) max + 2;
+		return (int) max + 3;
 	}
 	
 	private void render(BufferedImage image, int xShift, int yShift, float thickness, Color foreground, Color background)
@@ -198,12 +220,17 @@ public class LSystem
 	{
 		BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 		render(image, getXShift(), getYShift(), thickness, foreground, background);
+		reset();
+		return image;
+	}
+	
+	public void reset()
+	{
 		lines.clear();
 		current = origin.clone();
 		direction = initial.clone();
 		positionStack.clear();
 		directionStack.clear();
-		return image;
 	}
 
 	public void setN(int numGenerations)

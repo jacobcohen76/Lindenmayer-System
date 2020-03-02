@@ -8,4 +8,9 @@ public class PopDirection implements Action
 	{
 		system.popDirection();
 	}
+	
+	public String toString()
+	{
+		return "POPDIR";
+	}
 }

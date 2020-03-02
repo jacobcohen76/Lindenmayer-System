@@ -10,12 +10,9 @@ import java.util.Collection;
 
 import javax.swing.JPanel;
 
-
 public class StackPanel<T> extends JPanel
 {
 	private static final long serialVersionUID = 4648864358756471134L;
-	
-	private static final Font DEFAULT_FONT = new Font("Dialog", Font.PLAIN, 12);
 	
 	private ArrayList<T> dataStack;
 	private Font font;
@@ -35,14 +32,9 @@ public class StackPanel<T> extends JPanel
 		dataStack.addAll(stack);
 	}
 	
-	public StackPanel(Collection<T> stack, int n, Color textColor, Color borderColor, Color background)
+	public StackPanel(int n, Font font, Color textColor, Color borderColor, Color background)
 	{
-		this(stack, n, DEFAULT_FONT, textColor, borderColor, background);
-	}
-	
-	public StackPanel(int n, Color textColor, Color borderColor, Color background)
-	{
-		this(new ArrayList<T>(), n, textColor, borderColor, background);
+		this(new ArrayList<T>(), n, font, textColor, borderColor, background);
 	}
 	
 	public void add(T element)
@@ -59,9 +51,14 @@ public class StackPanel<T> extends JPanel
 	
 	public T pop()
 	{
-		T popped = dataStack.remove(dataStack.size() - 1);
-		repaint();
-		return popped;
+		if(dataStack.size() != 0)
+		{
+			T popped = dataStack.remove(dataStack.size() - 1);
+			repaint();
+			return popped;
+		}
+		else
+			return null;
 	}
 	
 	public void paint(Graphics g)
@@ -76,14 +73,19 @@ public class StackPanel<T> extends JPanel
 		int rectHeight = getHeight() / n;
 		
 		int start_x = 1;
-		int prev_y = 1;
+		int prev_y = 0;
 		
-		prev_y = (n - depth) * rectHeight;
+		for(i = 0; i < (n - depth); i++)
+		{
+			rect = new Rectangle(start_x, prev_y, getWidth() - 2, rectHeight);
+			drawRect(g, rect, borderColor);
+			prev_y += rectHeight;
+		}
 		
+		i = 0;
 		while(i < depth && i < dataStack.size())
 		{
 			rect = new Rectangle(start_x, prev_y, getWidth() - 2, rectHeight);
-			System.out.println(rect);
 			drawRect(g, rect, borderColor);
 			String text = dataStack.get(dataStack.size() - 1 - i).toString();
 			drawString(g, text, rect, font, textColor);

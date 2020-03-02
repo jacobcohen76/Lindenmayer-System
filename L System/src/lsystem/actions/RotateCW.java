@@ -15,4 +15,9 @@ public class RotateCW implements Action
 	{
 		system.rotateCW(radians);
 	}
+	
+	public String toString()
+	{
+		return "RCW " + radians;
+	}
 }

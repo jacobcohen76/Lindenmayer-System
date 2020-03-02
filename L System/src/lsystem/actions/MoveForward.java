@@ -15,4 +15,9 @@ public class MoveForward implements Action
 	{
 		system.moveForward(amount);
 	}
+	
+	public String toString()
+	{
+		return "MVFWD " + amount;
+	}
 }

@@ -8,4 +8,9 @@ public class PushPosition implements Action
 	{
 		system.pushPosition();
 	}
+	
+	public String toString()
+	{
+		return "PUSHPOS";
+	}
 }

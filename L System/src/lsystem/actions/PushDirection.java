@@ -8,4 +8,9 @@ public class PushDirection implements Action
 	{
 		system.pushDirection();
 	}
+	
+	public String toString()
+	{
+		return "PUSHDIR";
+	}
 }

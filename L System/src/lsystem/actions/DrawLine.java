@@ -8,4 +8,9 @@ public class DrawLine implements Action
 	{
 		system.drawLine();
 	}
+	
+	public String toString()
+	{
+		return "DRAWLINE";
+	}
 }

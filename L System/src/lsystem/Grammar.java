@@ -8,7 +8,7 @@ import lsystem.parser.lexicalanalysis.Dictionary;
 
 public class Grammar
 {
-	private HashMap<Symbol, LinkedList<Action>> actionMap;
+	public HashMap<Symbol, LinkedList<Action>> actionMap;
 	private HashMap<Symbol, LinkedList<Symbol>> replacementMap;
 	
 	public Grammar(LinkedList<ProductionRule> RuleList, HashMap<Symbol, LinkedList<Action>> actionMap, Dictionary<String> constants, Dictionary<String> variables)

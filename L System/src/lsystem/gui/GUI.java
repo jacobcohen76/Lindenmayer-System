@@ -609,8 +609,11 @@ public class GUI extends javax.swing.JFrame {
     		String rulesInput = rulesInputArea.getText();
     		
     		Parser parser = new Parser(rulesInput, constantsInput, variablesInput, axiomInput);
-    		system = parser.parseLSystem(5, origin, getVectorFromInput());
+    		system = parser.parseLSystem(getNumGenerations(), origin, getVectorFromInput());
     		display("Success, your LSystem has been created, now generate an image by going to File -> Save As, and then saving your image to your desired location.", SUCCESS);
+    		
+    		//TODO delete this shit mate
+    		service.execute(new Animate(system));
        	}
     	catch(Exception ex)
     	{
@@ -623,6 +626,21 @@ public class GUI extends javax.swing.JFrame {
     	finally
     	{
     		
+    	}
+    }
+    
+    private class Animate extends Thread
+    {
+    	private LSystem system;
+    	
+    	public Animate(LSystem system)
+    	{
+    		this.system = system;
+    	}
+    	
+    	public void run()
+    	{
+    		system.animate(foregroundColor, backgroundColor);
     	}
     }
     

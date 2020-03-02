@@ -8,4 +8,9 @@ public class PopPosition implements Action
 	{
 		system.popPosition();
 	}
+	
+	public String toString()
+	{
+		return "POPPOS";
+	}
 }
