@@ -24,8 +24,8 @@ public class LSystem
 	private Stack<Point> positionStack;
 	private Stack<Vector> directionStack;
 	
-	private Point origin;
-	private Vector initial;
+	public Point origin;
+	public Vector initial;
 	
 	private Point prev;
 	public Point current;

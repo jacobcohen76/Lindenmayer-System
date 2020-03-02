@@ -486,7 +486,10 @@ public class GUI extends javax.swing.JFrame {
     	public void run()
     	{
     		try {
+    			system.reset();
     			system.setN(getNumGenerations());
+    			system.origin = new Point(0, 0);
+    			system.initial = getVectorFromInput().normalize();
     			display("Generating Replacement String...", Color.BLACK);
     			system.generate();
     			display("Rendering Image...", Color.BLACK);
