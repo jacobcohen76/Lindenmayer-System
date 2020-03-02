@@ -145,23 +145,23 @@ public class AnimationFrame extends JFrame
 		switch(action.getClass().getName())
 		{
 		case "lsystem.actions.MoveForward":
-			animationPanel.moveTo(system.current.clone());
+			animationPanel.moveTo(system.current.clone(), getActionSpeed());
 			break;
 		case "lsystem.actions.RotateCCW":
-			animationPanel.rotateTo(((lsystem.actions.RotateCCW)action).radians, system.direction);
+			animationPanel.rotateTo(((lsystem.actions.RotateCCW)action).radians, system.direction, getActionSpeed());
 			break;
 		case "lsystem.actions.RotateCW":
-			animationPanel.rotateTo(((lsystem.actions.RotateCW)action).radians * -1, system.direction);
+			animationPanel.rotateTo(((lsystem.actions.RotateCW)action).radians * -1, system.direction, getActionSpeed());
 			break;
 		case "lsystem.actions.DrawLine":
-			animationPanel.drawLine();
+			animationPanel.drawLine(getActionSpeed());
 		case "lsystem.actions.PopDirection":
 			stackPanels.popDirection();
-			animationPanel.rotateTo(system.direction);
+			animationPanel.rotateTo(system.direction, getActionSpeed());
 			break;
 		case "lsystem.actions.PopPosition":
 			stackPanels.popPosition();
-			animationPanel.moveTo(system.current);
+			animationPanel.moveTo(system.current, getActionSpeed());
 			break;
 		case "lsystem.actions.PushDirection":
 			stackPanels.pushDirection(system.direction);

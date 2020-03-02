@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,8 +45,7 @@ public class GUI extends javax.swing.JFrame {
     */
    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
    private void initComponents() {
-	   this.setTitle("L-System Generator, Created by Jacob Cohen");
-	   
+
        grammarPopupFrame = new javax.swing.JFrame();
        jTextArea1 = new javax.swing.JTextArea();
        actionsHelpFrame = new javax.swing.JFrame();
@@ -73,6 +73,9 @@ public class GUI extends javax.swing.JFrame {
        jLabel2 = new javax.swing.JLabel();
        vectorIField = new javax.swing.JTextField();
        jLabel3 = new javax.swing.JLabel();
+       animateButton = new javax.swing.JButton();
+       thicknessLabel = new javax.swing.JLabel();
+       thicknessField = new javax.swing.JTextField();
        mainMenu = new javax.swing.JMenuBar();
        fileMenu = new javax.swing.JMenu();
        saveAs = new javax.swing.JMenuItem();
@@ -199,6 +202,16 @@ public class GUI extends javax.swing.JFrame {
 
        jLabel3.setText("Initial Direction = <");
 
+       animateButton.setText("ANIMATE");
+       animateButton.addActionListener(new java.awt.event.ActionListener() {
+           public void actionPerformed(java.awt.event.ActionEvent evt) {
+               animateButtonActionPerformed(evt);
+           }
+       });
+       animateButton.setEnabled(false);
+
+       thicknessLabel.setText("Thickness =");
+
        fileMenu.setText("File");
        fileMenu.addActionListener(new java.awt.event.ActionListener() {
            public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -320,11 +333,6 @@ public class GUI extends javax.swing.JFrame {
                    .addGroup(layout.createSequentialGroup()
                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                            .addGroup(layout.createSequentialGroup()
-                               .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                   .addComponent(axiomLabel)
-                                   .addComponent(rulesLabel))
-                               .addGap(0, 0, Short.MAX_VALUE))
-                           .addGroup(layout.createSequentialGroup()
                                .addGap(10, 10, 10)
                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                    .addComponent(jScrollPane3)
@@ -332,28 +340,40 @@ public class GUI extends javax.swing.JFrame {
                                    .addComponent(jScrollPane1)
                                    .addComponent(jScrollPane4)))
                            .addGroup(layout.createSequentialGroup()
-                               .addComponent(constantsLabel)
-                               .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 182, Short.MAX_VALUE)
-                               .addComponent(jLabel3)
-                               .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                               .addComponent(vectorIField, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                               .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                               .addComponent(jLabel2)
-                               .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                               .addComponent(vectorJField, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                               .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                               .addComponent(jLabel1)))
+                               .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                   .addComponent(axiomLabel)
+                                   .addComponent(rulesLabel)
+                                   .addGroup(layout.createSequentialGroup()
+                                       .addComponent(constantsLabel)
+                                       .addGap(29, 29, 29)
+                                       .addComponent(thicknessLabel)
+                                       .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                       .addComponent(thicknessField, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                       .addGap(18, 18, 18)
+                                       .addComponent(jLabel3)
+                                       .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                       .addComponent(vectorIField, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                       .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                       .addComponent(jLabel2)
+                                       .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                       .addComponent(vectorJField, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                       .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                       .addComponent(jLabel1)))
+                               .addGap(0, 0, Short.MAX_VALUE)))
                        .addGap(18, 18, 18))
                    .addGroup(layout.createSequentialGroup()
                        .addComponent(variablesLabel)
                        .addGap(475, 475, 475)))
-               .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+               .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                    .addComponent(generationProgress, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                        .addComponent(generationsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                        .addComponent(generationsInput, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
-                   .addComponent(buildButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                   .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                       .addComponent(buildButton, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                       .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                       .addComponent(animateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
                    .addComponent(jScrollPane5))
                .addContainerGap())
        );
@@ -371,12 +391,15 @@ public class GUI extends javax.swing.JFrame {
                            .addComponent(vectorIField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                            .addComponent(jLabel3)
                            .addComponent(vectorJField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                           .addComponent(jLabel1)))
+                           .addComponent(jLabel1)
+                           .addComponent(thicknessLabel)
+                           .addComponent(thicknessField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                    .addComponent(constantsLabel, javax.swing.GroupLayout.Alignment.TRAILING))
                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
-                   .addComponent(buildButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                   .addComponent(buildButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                   .addComponent(animateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                    .addComponent(variablesLabel, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -396,12 +419,9 @@ public class GUI extends javax.swing.JFrame {
                    .addComponent(jScrollPane5))
                .addContainerGap())
        );
-       
+
        pack();
-       
-	   this.setLocationRelativeTo(null);
-       
-   }// </editor-fold>             
+   }// </editor-fold>          
                       
 
     private Color foregroundColor = Color.GREEN;
@@ -609,11 +629,9 @@ public class GUI extends javax.swing.JFrame {
     		String rulesInput = rulesInputArea.getText();
     		
     		Parser parser = new Parser(rulesInput, constantsInput, variablesInput, axiomInput);
-    		system = parser.parseLSystem(getNumGenerations(), origin, getVectorFromInput());
+    		system = parser.parseLSystem(getNumGenerations(), origin.clone(), getVectorFromInput());
     		display("Success, your LSystem has been created, now generate an image by going to File -> Save As, and then saving your image to your desired location.", SUCCESS);
-    		
-    		//TODO delete this shit mate
-    		service.execute(new Animate(system));
+    		animateButton.setEnabled(true);
        	}
     	catch(Exception ex)
     	{
@@ -640,9 +658,34 @@ public class GUI extends javax.swing.JFrame {
     	
     	public void run()
     	{
-    		system.animate(foregroundColor, backgroundColor);
+        	buildButton.setEnabled(false);
+        	animateButton.setEnabled(false);
+    		system.animate(foregroundColor, backgroundColor, animationClosureEvent);
+    		buildButton.setEnabled(true);
+        	animateButton.setEnabled(true);
     	}
     }
+    
+    private java.awt.event.WindowListener animationClosureEvent = new java.awt.event.WindowAdapter()
+    {
+        @Override
+        public void windowClosing(java.awt.event.WindowEvent windowEvent)
+        {
+            try
+            {
+            	buildButton.setEnabled(true);
+            	animateButton.setEnabled(true);
+            	List<Runnable> enqueued = service.shutdownNow();
+            	service = Executors.newFixedThreadPool(1);
+            	for(Runnable runnable : enqueued)
+            		service.execute(runnable);
+            }
+            catch(Exception ex)
+            {
+            	
+            }
+        }
+    };
     
     private Vector getVectorFromInput()
     {
@@ -689,7 +732,13 @@ public class GUI extends javax.swing.JFrame {
         actionsHelpFrame.setVisible(true);
         actionsHelpFrame.pack();
         actionsHelpFrame.setResizable(false);
-    }                                                      
+    }
+    
+    private void animateButtonActionPerformed(java.awt.event.ActionEvent evt) {                                              
+        // TODO add your handling code here:
+    	service.execute(new Animate(system));
+    	
+    }
 
     /**
      * @param args the command line arguments
@@ -729,6 +778,7 @@ public class GUI extends javax.swing.JFrame {
     // Variables declaration - do not modify                     
     private javax.swing.JTextArea actionsHelpArea;
     private javax.swing.JFrame actionsHelpFrame;
+    private javax.swing.JButton animateButton;
     private javax.swing.JTextArea axiomInputArea;
     private javax.swing.JLabel axiomLabel;
     private javax.swing.JMenuItem backgroundMenuItem;
@@ -766,9 +816,11 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem sierpinskiArrowHeadMenuItem;
     private javax.swing.JMenuItem sierpinskiTriangleMenuItem;
     private javax.swing.JTextArea statusArea;
+    private javax.swing.JTextField thicknessField;
+    private javax.swing.JLabel thicknessLabel;
     private javax.swing.JTextArea variablesInputArea;
     private javax.swing.JLabel variablesLabel;
     private javax.swing.JTextField vectorIField;
     private javax.swing.JTextField vectorJField;
-    // End of variables declaration                   
+    // End of variables declaration
 }

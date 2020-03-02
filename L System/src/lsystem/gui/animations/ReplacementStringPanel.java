@@ -13,6 +13,8 @@ public class ReplacementStringPanel extends JPanel
 {
 	private static final long serialVersionUID = -7299249429292546704L;
 	
+	private static final int n = 256;
+	
 	private JLabel current;
 	private JLabel remainder;
 	
@@ -36,7 +38,10 @@ public class ReplacementStringPanel extends JPanel
 		remainder = new JLabel();
 		remainder.setFont(font);
 		remainder.setForeground(fontColor);
-		remainder.setText(replacementString);
+		if(replacementString.length() > n)
+			remainder.setText(replacementString.substring(0, n));
+		else
+			remainder.setText(replacementString);
 		
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -69,7 +74,10 @@ public class ReplacementStringPanel extends JPanel
 		{
 			current.setText(replacementString.substring(0, 1));
 			replacementString = replacementString.substring(1);
-			remainder.setText(replacementString);
+			if(replacementString.length() > n)
+				remainder.setText(replacementString.substring(0, n));
+			else
+				remainder.setText(replacementString);
 		}
 		else
 		{

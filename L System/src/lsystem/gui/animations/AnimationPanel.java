@@ -25,7 +25,6 @@ public class AnimationPanel extends JPanel
 	private JLayeredPane layers;
 	
 	private MovementPanel movementPanel;
-	private LinePanel linePanel;
 	
 	public AnimationPanel(Point origin, Vector direction, Color foreground, Color background, int width, int height, int shiftX, int shiftY)
 	{
@@ -38,37 +37,32 @@ public class AnimationPanel extends JPanel
 		layers.setPreferredSize(size);
 		layers.setLayout(new BorderLayout());
 		
-		movementPanel = new MovementPanel(RADIUS, LENGTH, shiftX, shiftY, POINTA, POINTB, VECTOR, foreground, origin, direction);
+		movementPanel = new MovementPanel(RADIUS, LENGTH, shiftX, shiftY, POINTA, POINTB, VECTOR, foreground, background, origin, direction);
 		movementPanel.setPreferredSize(size);
 		
-		linePanel = new LinePanel(foreground, background, shiftX, shiftY);
-		linePanel.setPreferredSize(size);
-		linePanel.setSize(size);
-		
-		layers.add(linePanel, BorderLayout.CENTER, 0);
-		layers.add(movementPanel, BorderLayout.CENTER, 1);
+		layers.add(movementPanel, BorderLayout.CENTER, 0);
 		
 		this.add(layers, BorderLayout.CENTER);
 	}
 	
-	public void moveTo(Point pos)
+	public void moveTo(Point pos, int millis)
 	{
-		movementPanel.moveTo(pos);
+		movementPanel.moveTo(pos, millis);
 	}
 	
-	public void rotateTo(double radians, Vector transformation)
+	public void rotateTo(double radians, Vector transformation, int millis)
 	{
-		movementPanel.rotateTo(radians, transformation);
+		movementPanel.rotateTo(radians, transformation, millis);
 	}
 	
-	public void rotateTo(Vector transformation)
+	public void rotateTo(Vector transformation, int millis)
 	{
-		movementPanel.rotateTo(transformation);
+		movementPanel.rotateTo(transformation, millis);
 	}
 	
-	public void drawLine()
+	public void drawLine(int millis)
 	{
-		movementPanel.drawLine();
-		linePanel.draw(movementPanel.getLine());
+		movementPanel.drawLine(millis);
+		movementPanel.draw(movementPanel.getLine());
 	}
 }

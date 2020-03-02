@@ -2,7 +2,7 @@ package lsystem.gui.animations;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
@@ -13,8 +13,7 @@ import lsystem.cartesian2d.Vector;
 public class MovementPanel extends JPanel
 {
 	private static final long serialVersionUID = -408764710346055893L;
-	private static int INTERVAL = 1;
-	private static int FRAMES = 50;
+	private static double FPMS = 60.0 / 1000.0;
 	
 	private Point current;
 	private Point prev;
@@ -24,12 +23,15 @@ public class MovementPanel extends JPanel
 	private Color B;
 	private Color C;
 	private Color D;
+	private Color background;
 	private int radius;
 	private int length;
 	private int shiftX;
 	private int shiftY;
 	
-	public MovementPanel(int radius, int length, int shiftX, int shiftY, Color A, Color B, Color C, Color D, Point origin, Vector direction)
+	private ArrayList<LineSegment> lines;
+	
+	public MovementPanel(int radius, int length, int shiftX, int shiftY, Color A, Color B, Color C, Color D, Color background, Point origin, Vector direction)
 	{
 		this.setOpaque(false);
 		
@@ -41,9 +43,12 @@ public class MovementPanel extends JPanel
 		this.B = B;
 		this.C = C;
 		this.D = D;
+		this.background = background;
 		this.direction = direction.normalize();
 		current = origin;
 		prev = origin.clone();
+		
+		lines = new ArrayList<LineSegment>();
 	}
 	
 	private boolean renderingLine = false;
@@ -51,9 +56,11 @@ public class MovementPanel extends JPanel
 	
 	public void paint(Graphics g)
 	{
-		Graphics2D g2D = (Graphics2D) g;
-		g2D.setBackground(new Color(0, 0, 0, 0));
-		g2D.clearRect(0, 0, getWidth(), getHeight());
+		g.setColor(background);
+		g.fillRect(0, 0, getWidth(), getHeight());
+		
+		for(LineSegment line : lines)
+			render(line, g);
 		
 		if(renderingLine)
 			render(g, prev, increment, D, shiftX, shiftY);
@@ -62,14 +69,22 @@ public class MovementPanel extends JPanel
 		render(g, current, direction, C, shiftX, shiftY, length);
 	}
 	
-	public void moveTo(Point pos)
+	public void moveTo(Point pos, int millis)
 	{
-		move(prev, current, pos, FRAMES, INTERVAL);
+		int numFrames = (int) Math.round(FPMS * millis);
+		if(numFrames <= 0)
+			numFrames = 1;
+		int interval = (int) Math.round((double) millis / (double) numFrames);
+		move(prev, current, pos, numFrames, interval);
 	}
 	
-	public void drawLine()
+	public void drawLine(int millis)
 	{
-		animateLine(FRAMES, INTERVAL);
+		int numFrames = (int) Math.round(FPMS * millis);
+		if(numFrames <= 0)
+			numFrames = 1;
+		int interval = (int) Math.round((double) millis / (double) numFrames);
+		animateLine(numFrames, interval);
 	}
 	
 	private void animateLine(int frames, int interval)
@@ -98,17 +113,25 @@ public class MovementPanel extends JPanel
 		}
 	}
 	
-	public void rotateTo(double radians, Vector transformation)
+	public void rotateTo(double radians, Vector transformation, int millis)
 	{
+		int numFrames = (int) Math.round(FPMS * millis);
+		if(numFrames <= 0)
+			numFrames = 1;
+		int interval = (int) Math.round((double) millis / (double) numFrames);
 		transformation = transformation.normalize();
-		rotate(radians, direction, transformation, FRAMES, INTERVAL);
+		rotate(radians, direction, transformation, numFrames, interval);
 	}
 	
-	public void rotateTo(Vector transformation)
+	public void rotateTo(Vector transformation, int millis)
 	{
+		int numFrames = (int) Math.round(FPMS * millis);
+		if(numFrames <= 0)
+			numFrames = 1;
+		int interval = (int) Math.round((double) millis / (double) numFrames);
 		transformation = transformation.normalize();
 		double radians = Vector.getAngleBetween(direction, transformation);
-		rotate(radians, direction, transformation, FRAMES, INTERVAL);
+		rotate(radians, direction, transformation, numFrames, interval);
 	}
 	
 	private void rotate(double radians, Vector current, Vector transformation, int frames, int interval)
@@ -201,6 +224,22 @@ public class MovementPanel extends JPanel
 		int y2 = (int) Math.round(shiftY - destination.y);
 		
 		g.setColor(c);
+		g.drawLine(x1, y1, x2, y2);
+	}
+	
+	public void draw(LineSegment line)
+	{
+		lines.add(line);
+		repaint();
+	}
+	
+	private void render(LineSegment line, Graphics g)
+	{
+		g.setColor(D);
+		int x1 = (int) Math.round(line.a.x - shiftX);
+		int y1 = (int) Math.round(shiftY - line.a.y);
+		int x2 = (int) Math.round(line.b.x - shiftX);
+		int y2 = (int) Math.round(shiftY - line.b.y);
 		g.drawLine(x1, y1, x2, y2);
 	}
 }

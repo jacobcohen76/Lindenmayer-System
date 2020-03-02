@@ -3,6 +3,7 @@ package lsystem;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.Stack;
@@ -65,8 +66,9 @@ public class LSystem
 		return production;
 	}
 	
-	public void animate(Color foreground, Color background)
+	public void animate(Color foreground, Color background, WindowListener closureEvent)
 	{
+		reset();
 		LinkedList<Symbol> replacement = getReplacement();
 		perform(replacement);
 		
@@ -75,8 +77,9 @@ public class LSystem
 		int xShift = getXShift();
 		int yShift = getYShift();
 		
-		AnimationPanel animationPanel = new AnimationPanel(origin, initial, foreground, background, width, height, xShift, yShift);
+		AnimationPanel animationPanel = new AnimationPanel(origin.clone(), initial.clone(), foreground, background, width, height, xShift, yShift);
 		AnimationFrame animationFrame = new AnimationFrame(animationPanel, this, replacement, Color.BLACK, Color.WHITE, Color.YELLOW);
+		animationFrame.addWindowListener(closureEvent);
 		
 		animationFrame.play();
 	}
