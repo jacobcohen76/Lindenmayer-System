@@ -177,7 +177,7 @@ public class LSystem
 			min = min(min, line.a.x, line.b.x);
 			max = max(max, line.a.x, line.b.x);
 		}
-		return (int) (max - min) + 6;
+		return (int) Math.round(max - min) + 3;
 	}
 	
 	private int getHeight()
@@ -189,7 +189,7 @@ public class LSystem
 			min = min(min, line.a.y, line.b.y);
 			max = max(max, line.a.y, line.b.y);
 		}
-		return (int) (max - min) + 6;
+		return (int) Math.round(max - min) + 3;
 	}
 	
 	private int getXShift()
@@ -197,7 +197,7 @@ public class LSystem
 		double min = Double.POSITIVE_INFINITY;
 		for(LineSegment line : lines)
 			min = min(min, line.a.x, line.b.x);
-		return (int) min - 3;
+		return (int) Math.round(min - 1);
 	}
 	
 	private int getYShift()
@@ -205,7 +205,7 @@ public class LSystem
 		double max = Double.NEGATIVE_INFINITY;
 		for(LineSegment line : lines)
 			max = max(max, line.a.y, line.b.y);
-		return (int) max + 3;
+		return (int) Math.round(max + 1);
 	}
 	
 	private void render(BufferedImage image, int xShift, int yShift, float thickness, Color foreground, Color background)

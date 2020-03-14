@@ -65,6 +65,7 @@ public class Tokenizer
 		alphabet.add(' ');
 		alphabet.add('\t');
 		alphabet.add('\n');
+		alphabet.add('\r');
 		
 		if(constants.isEmpty() == false || variables.isEmpty() == false)
 			for(int i = 0; i < input.length(); i++)
@@ -236,7 +237,7 @@ public class Tokenizer
 	
 	private boolean isWhiteSpace(char c)
 	{
-		return c == ' ' || c == '\t' || c == '\n';
+		return Character.isWhitespace(c) || c == '\r';
 	}
 	
 	private boolean isNewLine(char c)

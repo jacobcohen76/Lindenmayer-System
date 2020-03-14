@@ -33,7 +33,7 @@ public class AnimationFrame extends JFrame
 		this.replacement = replacement;
 		
 		animationPanel = aPanel;
-		actionMapPanel = new ActionMapPanel(system.grammar.actionMap, font, fontColor);
+		actionMapPanel = new ActionMapPanel(system.grammar.actionMap, font, fontColor, highlightColor);
 		replacementStringPanel = new ReplacementStringPanel(replacement, fontColor, highlightColor, font);
 		stackPanels = new StackPanels(10, font, fontColor, Color.BLACK, background);
 		timerSettingsPanel = new TimerSettingsPanel(font, fontColor);
@@ -112,7 +112,6 @@ public class AnimationFrame extends JFrame
 			actionMapPanel.highlight(symbol);
 			pause(getDelayTime());
 			perform(system.getActions(symbol));
-			pause(getDelayTime());			
 			actionMapPanel.removeSymbolHighlight();
 		}
 	}

@@ -39,12 +39,14 @@ public class TimerSettingsPanel extends javax.swing.JPanel {
         delayTimeSlider = new javax.swing.JSlider();
         
         actionSpeedSlider.setMinimum(1);
-        actionSpeedSlider.setMaximum(10000);
+        actionSpeedSlider.setMaximum(1000);
         actionSpeedSlider.setValue(1000);
+        actionSpeedSlider.setMajorTickSpacing(10);
         
         delayTimeSlider.setMinimum(1);
-        delayTimeSlider.setMaximum(10000);
+        delayTimeSlider.setMaximum(1000);
         delayTimeSlider.setValue(1000);
+        delayTimeSlider.setMajorTickSpacing(10);
         
         actionSpeedPanel.setOpaque(false);
         delayTimePanel.setOpaque(false);

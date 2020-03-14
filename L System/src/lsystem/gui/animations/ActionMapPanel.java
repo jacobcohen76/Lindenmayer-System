@@ -16,11 +16,12 @@ public class ActionMapPanel extends JPanel
 	
 	private SymbolPanel symbolPanel;
 	private ActionListPanel actionListPanel;
+	private Color highlightColor;
 	
-	public ActionMapPanel(HashMap<Symbol, LinkedList<Action>> actionMap, Font font, Color fontColor)
+	public ActionMapPanel(HashMap<Symbol, LinkedList<Action>> actionMap, Font font, Color fontColor, Color highlightColor)
 	{
 		this.setOpaque(false);
-		
+		this.highlightColor = highlightColor;
 		Object[] keys = actionMap.keySet().toArray();
 		Object[] actionList = new Object[actionMap.size()];
 		
@@ -48,12 +49,12 @@ public class ActionMapPanel extends JPanel
 	
 	public void highlight(Symbol symbol)
 	{
-		symbolPanel.highlight(symbol, Color.RED);
+		symbolPanel.highlight(symbol, highlightColor);
 	}
 	
 	public void highlight(Action action)
 	{
-		actionListPanel.highlight(action, Color.RED);
+		actionListPanel.highlight(action, highlightColor);
 	}
 	
 	public void removeSymbolHighlight()

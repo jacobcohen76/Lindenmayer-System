@@ -3,7 +3,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import lsystem.actions.Action;
+import lsystem.actions.DecrementAngle;
 import lsystem.actions.DrawLine;
+import lsystem.actions.IncrementAngle;
 import lsystem.actions.MoveForward;
 import lsystem.actions.PopDirection;
 import lsystem.actions.PopPosition;
@@ -11,6 +13,8 @@ import lsystem.actions.PushDirection;
 import lsystem.actions.PushPosition;
 import lsystem.actions.RotateCCW;
 import lsystem.actions.RotateCW;
+import lsystem.actions.ScaleLine;
+import lsystem.actions.SwapAngles;
 import lsystem.cartesian2d.Point;
 import lsystem.cartesian2d.Vector;
 import lsystem.parser.lexicalanalysis.Dictionary;
@@ -32,6 +36,10 @@ public class Parser
 		KEYWORDS.add("PUSHDIR");
 		KEYWORDS.add("PUSHPOS");
 		KEYWORDS.add("POPPOS");
+		KEYWORDS.add("INCANGLE");
+		KEYWORDS.add("DECANGLE");
+		KEYWORDS.add("SCALE");
+		KEYWORDS.add("SWAP");
 	}
 	
 	private LexicalAnalyzer lexer;
@@ -175,8 +183,16 @@ public class Parser
 			return new RotateCCW(parseNum());
 		case "RCW":
 			return new RotateCW(parseNum());
+		case "INCANGLE":
+			return new IncrementAngle(parseNum());
+		case "DECANGLE":
+			return new DecrementAngle(parseNum());
 		case "MVFWD":
 			return new MoveForward(parseNum());
+		case "SCALE":
+			return new ScaleLine(parseNum());
+		case "SWAP":
+			return new SwapAngles();
 		case "POPDIR":
 			return new PopDirection();
 		case "DRAWLINE":

@@ -6,7 +6,7 @@ import java.util.Iterator;
 
 public class Dictionary<T> implements Iterable<T>
 {
-	private HashSet<T> elements;
+	public HashSet<T> elements;
 	
 	public Dictionary(HashSet<T> elements)
 	{
