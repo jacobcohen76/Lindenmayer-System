@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 public class Presets
 {
 	public static final Preset KOCH_CURVE;
+	public static final Preset QUADRATIC_KOCH_CURVE_B;
 	public static final Preset KOCH_CURVE_ALT;
 	public static final Preset QUADRATIC_KOCH_ISLAND_1;
 	public static final Preset QUADRATIC_KOCH_ISLAND_2;
@@ -67,6 +68,18 @@ public class Presets
 			   variables = "",
 			   axiom = "",
 			   rules = "";
+		
+		title = "Koch Curve B";
+		thickness = "1.0";
+		i = "1.0";
+		j = "0.0";
+		n = "4";
+		constants = "+ (RCCW 1.57079632679),\r\n"
+	              + "- (RCW 1.57079632679)";
+		variables = "F (MVFWD 8, DRAWLINE)";
+		axiom = "F";
+		rules = "F = F + F - F - F F + F + F - F;";
+		QUADRATIC_KOCH_CURVE_B = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
 		
 		title = "Sierpinski Square";
 		thickness = "1.0";

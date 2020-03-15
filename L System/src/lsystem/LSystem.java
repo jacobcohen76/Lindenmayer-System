@@ -61,7 +61,7 @@ public class LSystem
 	public LinkedList<Symbol> getReplacement()
 	{
 		LinkedList<Symbol> production = axiom;
-		for(int i = 0; i < n; i++)
+		for(int i = 0; i < n - 1; i++)
 			production = grammar.getReplacement(production);
 		return production;
 	}
