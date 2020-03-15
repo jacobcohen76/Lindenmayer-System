@@ -24,6 +24,7 @@ public class AnimationFrame extends JFrame
 	private ReplacementStringPanel replacementStringPanel;
 	private StackPanels stackPanels;
 	private TimerSettingsPanel timerSettingsPanel;
+	private boolean stop;
 	
 	public AnimationFrame(AnimationPanel aPanel, LSystem system, LinkedList<Symbol> replacement, Color fontColor, Color background, Color highlightColor)
 	{
@@ -106,6 +107,7 @@ public class AnimationFrame extends JFrame
 	public void play()
 	{
 		system.reset();
+		stop = false;
 		for(Symbol symbol : replacement)
 		{
 			shift();
@@ -113,7 +115,14 @@ public class AnimationFrame extends JFrame
 			pause(getDelayTime());
 			perform(system.getActions(symbol));
 			actionMapPanel.removeSymbolHighlight();
+			if(stop == true)
+				break;
 		}
+	}
+	
+	public void stop()
+	{
+		stop = true;
 	}
 	
 	private void perform(LinkedList<Action> actions)

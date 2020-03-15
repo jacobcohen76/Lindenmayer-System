@@ -66,6 +66,8 @@ public class LSystem
 		return production;
 	}
 	
+	private AnimationFrame animationFrame = null;
+	
 	public void animate(Color foreground, Color background, WindowListener closureEvent)
 	{
 		reset();
@@ -78,10 +80,16 @@ public class LSystem
 		int yShift = getYShift();
 		
 		AnimationPanel animationPanel = new AnimationPanel(origin.clone(), initial.clone(), foreground, background, width, height, xShift, yShift);
-		AnimationFrame animationFrame = new AnimationFrame(animationPanel, this, replacement, Color.BLACK, Color.WHITE, Color.YELLOW);
+		animationFrame = new AnimationFrame(animationPanel, this, replacement, Color.BLACK, Color.WHITE, Color.YELLOW);
 		animationFrame.addWindowListener(closureEvent);
 		
 		animationFrame.play();
+	}
+	
+	public void stopAnimation()
+	{
+		if(animationFrame != null)
+			animationFrame.stop();
 	}
 	
 	private void perform(LinkedList<Symbol> axiom)

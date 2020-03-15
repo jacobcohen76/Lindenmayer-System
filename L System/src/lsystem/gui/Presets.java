@@ -1,9 +1,26 @@
 package lsystem.gui;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 public class Presets
 {
+	public static final Preset KOCH_CURVE;
+	public static final Preset KOCH_CURVE_ALT;
+	public static final Preset QUADRATIC_KOCH_ISLAND_1;
+	public static final Preset QUADRATIC_KOCH_ISLAND_2;
+	public static final Preset QUADRATIC_KOCH_ISLAND_3;
+	public static final Preset QUADRATIC_KOCH_ISLAND_ALT;
+	public static final Preset HONEY_COMB;
+	public static final Preset BOARD;
+	
 	public static final Preset KOCH_SNOWFLAKE;
 	public static final Preset KOCH_ANTI_SNOWFLAKE;
+	
 	public static final Preset GOSPER_CURVE;
 	public static final Preset ICY_FRACTAL;
 	public static final Preset FRACTAL_TREE;
@@ -15,8 +32,8 @@ public class Presets
 	public static final Preset SQUARE_SNOWFLAKE;
 	public static final Preset FRACTAL_TILES;
 	
-	public static final Preset BOURKE_CROSS_1;
-	public static final Preset BOURKE_CROSS_2;
+	public static final Preset CROSS_1;
+	public static final Preset CROSS_2;
 	public static final Preset PENTAPLEXITY;
 	public static final Preset FRACTAL_RINGS;
 	public static final Preset HEXAGONAL_GOSPER;
@@ -33,6 +50,12 @@ public class Presets
 	public static final Preset FERN;
 	public static final Preset BROCCOLI;
 	
+	public static final Preset DRAGON_CURVE;
+	
+	public static final Preset SIERPINSKI_SQUARE;
+	public static final Preset SIERPINSKI_ARROWHEAD;
+	public static final Preset SIERPINSKI_TRIANGLE;
+	
 	static
 	{
 		String title = "",
@@ -44,6 +67,118 @@ public class Presets
 			   variables = "",
 			   axiom = "",
 			   rules = "";
+		
+		title = "Sierpinski Square";
+		thickness = "1.0";
+		i = "1.0";
+		j = "0.0";
+		n = "4";
+		constants = "+ (RCCW 1.57079632679),\r\n"
+	              + "- (RCW 1.57079632679),\r\n"
+	              + "F (MVFWD 10, DRAWLINE)";
+		variables = "X";
+		axiom = "F+XF+F+XF";
+		rules = "X = XF-F+F-XF+F+XF-F+F-X;";
+		SIERPINSKI_SQUARE = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
+		
+		i = "0.0";
+		j = "-1.0";
+		n = "5";
+		title = "Sierpinski Triangle";
+		constants = "+(RCCW 2.0943951024),\r\n-(RCW 2.0943951024)";
+		variables = "F(MVFWD 20, DRAWLINE),\r\nG(MVFWD 20, DRAWLINE)";
+		axiom = "F-G-G";
+		rules = "F=F-G+F+G-F;\nG=GG;";
+		SIERPINSKI_TRIANGLE =  new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
+		
+		title = "Sierpinski Arrowhead";
+		thickness = "1.0";
+		i = "1.0";
+		j = "0.0";
+		n = "4";
+		constants = "+ (RCCW 1.0471975512),\r\n"
+	              + "- (RCW 1.0471975512),\r\n"
+	              + "F (MVFWD 10, DRAWLINE)";
+		variables = "X, Y";
+		axiom = "YF";
+		rules = "X = YF+XF+Y;\r\n" + 
+				"Y = XF-YF-X;";
+		SIERPINSKI_ARROWHEAD = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
+		
+		title = "Dragon Curve";
+		thickness = "1.0";
+		i = "1.0";
+		j = "0.0";
+		n = "4";
+		constants = "+ (RCCW 1.57079632679),\r\n"
+	              + "- (RCW 1.57079632679),\r\n"
+	              + "F (MVFWD 10, DRAWLINE)";
+		variables = "X, Y";
+		axiom = "FX";
+		rules = "X = X+YF+;\r\n" + 
+				"Y = -FX-Y;";
+		DRAGON_CURVE = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
+		
+		title = "Koch Curve";
+		thickness = "1.0";
+		i = "1.0";
+		j = "0.0";
+		n = "4";
+		constants = "+ (RCCW 1.57079632679),\r\n"
+	              + "- (RCW 1.57079632679)";
+		variables = "F (MVFWD 10, DRAWLINE)";
+		axiom = "F";
+		rules = "F = F - F + F + F - F;";
+		KOCH_CURVE = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
+		
+		n = "3";
+		title += " Alt";
+		axiom = "FF+FF+FF+FF";
+		rules = "F = F+F-F-F+F;";
+		KOCH_CURVE_ALT = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
+		
+		n = "2";
+		variables = "F (MVFWD 25, DRAWLINE)";
+		title = "Quadratic Koch Island 1";
+		axiom = "F+F+F+F";
+		rules = "F = F+F-F-FFF+F+F-F;";
+		QUADRATIC_KOCH_ISLAND_1 = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
+		
+		variables = "F (MVFWD 10, DRAWLINE)";
+		title = "Quadratic Koch Island 2";
+		axiom = "F+F+F+F";
+		rules = "F = F-FF+FF+F+F-F-FF+F+F-F-FF-FF+F;";
+		QUADRATIC_KOCH_ISLAND_2 = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
+		
+		title = "Quadratic Koch Island 3";
+		axiom = "F+F+F+F";
+		rules = "F = F+F-F-FF+F+F-F;";
+		QUADRATIC_KOCH_ISLAND_3 = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
+		
+		QUADRATIC_KOCH_ISLAND_ALT = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
+		
+		title = "Honey Comb";
+		thickness = "1.0";
+		i = "1.0";
+		j = "0.0";
+		n = "8";
+		constants = "+ (RCCW 1.0471975512),\r\n" + 
+				"- (RCW 1.0471975512)";
+		variables = "F (MVFWD 5, DRAWLINE)";
+		axiom = "F + F";
+		rules = "F = F - F + F - F;";
+		HONEY_COMB = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
+		
+		title = "Board";
+		thickness = "1.0";
+		i = "1.0";
+		j = "0.0";
+		n = "4";
+		constants = "+ (RCCW 1.57079632679)";
+		variables = "F (MVFWD 10, DRAWLINE)";
+		axiom = "F+F+F+F";
+		rules = "F = FF+F+F+F+FF;";
+		BOARD = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
 		
 		title = "Broccoli";
 		thickness = "1.0";
@@ -148,16 +283,16 @@ public class Presets
 		thickness = "1.0";
 		i = "1.0";
 		j = "0.0";
-		n = "5";
+		n = "4";
 		constants = "+ (RCCW 1.0471975512),\r\n"
 	  			  + "- (RCW 1.0471975512)";
-		variables = "F (MVFWD 10, DRAWLINE)";
+		variables = "F (MVFWD 8, DRAWLINE)";
 		axiom = "F + + F + + F";
 		rules = "F = F - F + + F - F;";
 		KOCH_SNOWFLAKE = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
 		
 		
-		title = "Bourke Cross 1";
+		title = "Cross 1";
 		thickness = "1.0";
 		i = "1.0";
 		j = "0.0";
@@ -167,9 +302,9 @@ public class Presets
 		variables = "F (MVFWD 10, DRAWLINE)";
 		axiom = "F + F + F + F";
 		rules = "F = F + F F + + F + F;";
-		BOURKE_CROSS_1 = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
+		CROSS_1 = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
 		
-		title = "Bourke Cross 2";
+		title = "Cross 2";
 		thickness = "1.0";
 		i = "1.0";
 		j = "0.0";
@@ -179,7 +314,7 @@ public class Presets
 		variables = "F (MVFWD 10, DRAWLINE)";
 		axiom = "F + F + F + F";
 		rules = "F = F + F - F + F + F;";
-		BOURKE_CROSS_2 = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
+		CROSS_2 = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
 		 
 		title = "Pentaplexity";
 		thickness = "";
@@ -230,7 +365,7 @@ public class Presets
 				  + "- (RCW 0.7853981634)";
 		variables = "F (MVFWD 10, DRAWLINE)";
 		axiom = "F";
-		rules = "F = - F + + F -";
+		rules = "F = - F + + F -;";
 		LEVY_CURVE = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
 		
 		title = "Sierpinski Curve";
@@ -281,10 +416,10 @@ public class Presets
 		thickness = "1.0";
 		i = "1.0";
 		j = "0";
-		n = "3";
+		n = "4";
 		constants = "+ (RCCW 0.7853981634),\r\n"
 				  + "- (RCW 0.7853981634),\r\n"
-				  + "F (MVFWD 10, DRAWLINE),\r\n"
+				  + "F (MVFWD 8, DRAWLINE),\r\n"
 				  + "( (INCANGLE 0.1),\r\n"
 				  + "( (DECANGLE 0.1)";
 		variables = "A, B, C, D";
@@ -297,9 +432,14 @@ public class Presets
 
 		
 		KOCH_ANTI_SNOWFLAKE = new Preset();
+		KOCH_ANTI_SNOWFLAKE.thickness = "1.0";
+		KOCH_ANTI_SNOWFLAKE.title = "Koch Anti-Snowflake";
+		KOCH_ANTI_SNOWFLAKE.i = "1";
+		KOCH_ANTI_SNOWFLAKE.j = "0";
+		KOCH_ANTI_SNOWFLAKE.n = "4";
 		KOCH_ANTI_SNOWFLAKE.constants = "+ (RCCW 1.0471975512),\r\n"
 									  + "- (RCW 1.0471975512)";
-		KOCH_ANTI_SNOWFLAKE.variables = "F (MVFWD 10, DRAWLINE)";
+		KOCH_ANTI_SNOWFLAKE.variables = "F (MVFWD 8, DRAWLINE)";
 		KOCH_ANTI_SNOWFLAKE.axiom = "F + + F + + F";
 		KOCH_ANTI_SNOWFLAKE.rules = "F = F + F - - F + F;";
 		
@@ -407,5 +547,24 @@ public class Presets
 		FRACTAL_TILES.axiom = "F + F + F + F";
 		FRACTAL_TILES.rules = "F = F F + F - F + F + F F;";
 		
+	}
+	
+	public static void write(Preset preset, String path) throws IOException
+	{
+		File f = new File(path);
+		FileOutputStream fos = new FileOutputStream(f);
+		ObjectOutputStream oos = new ObjectOutputStream(fos);
+		oos.writeObject(preset);
+		oos.close();
+	}
+	
+	public static Preset read(String path) throws IOException, ClassNotFoundException
+	{
+		File f = new File(path);
+		FileInputStream fis = new FileInputStream(f);
+		ObjectInputStream ois = new ObjectInputStream(fis);
+		Object readObject = ois.readObject();
+		ois.close();
+		return (Preset)readObject;
 	}
 }

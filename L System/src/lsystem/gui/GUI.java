@@ -9,7 +9,6 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -95,12 +94,6 @@ public class GUI extends javax.swing.JFrame {
        fileMenu = new javax.swing.JMenu();
        saveAs = new javax.swing.JMenuItem();
        presetsMenu = new javax.swing.JMenu();
-       kochCurveMenuItem = new javax.swing.JMenuItem();
-       fractalBinaryTreeMenuItem = new javax.swing.JMenuItem();
-       sierpinskiTriangleMenuItem = new javax.swing.JMenuItem();
-       sierpinskiArrowHeadMenuItem = new javax.swing.JMenuItem();
-       dragonCurveMenuItem = new javax.swing.JMenuItem();
-       fractalPlantMenuItem = new javax.swing.JMenuItem();
        resetMenuItem = new javax.swing.JMenuItem();
        helpMenu = new javax.swing.JMenu();
        displayActionsMenuItem = new javax.swing.JMenuItem();
@@ -244,7 +237,7 @@ public class GUI extends javax.swing.JFrame {
            }
        });
        fileMenu.add(saveAs);
-
+       
        presetsMenu.setText("Load Presets");
        plantsMenu.setText("Plants");
        presetsMenu.add(plantsMenu);
@@ -255,54 +248,35 @@ public class GUI extends javax.swing.JFrame {
        addItem(plantsMenu, Presets.TRINARY_BUSH);
        addItem(plantsMenu, Presets.FERN);
        addItem(plantsMenu, Presets.BROCCOLI);
-
-       kochCurveMenuItem.setText("Koch Curve");
-       kochCurveMenuItem.addActionListener(new java.awt.event.ActionListener() {
-           public void actionPerformed(java.awt.event.ActionEvent evt) {
-               kochCurveMenuItemActionPerformed(evt);
-           }
-       });
-       presetsMenu.add(kochCurveMenuItem);
-
-       fractalBinaryTreeMenuItem.setText("Fractal Binary Tree");
-       fractalBinaryTreeMenuItem.addActionListener(new java.awt.event.ActionListener() {
-           public void actionPerformed(java.awt.event.ActionEvent evt) {
-               fractalBinaryTreeMenuItemActionPerformed(evt);
-           }
-       });
-       presetsMenu.add(fractalBinaryTreeMenuItem);
-
-       sierpinskiTriangleMenuItem.setText("Sierpinski Triangle");
-       sierpinskiTriangleMenuItem.addActionListener(new java.awt.event.ActionListener() {
-           public void actionPerformed(java.awt.event.ActionEvent evt) {
-               sierpinskiTriangleMenuItemActionPerformed(evt);
-           }
-       });
-       presetsMenu.add(sierpinskiTriangleMenuItem);
-
-       sierpinskiArrowHeadMenuItem.setText("Sierpinski Arrowhead");
-       sierpinskiArrowHeadMenuItem.addActionListener(new java.awt.event.ActionListener() {
-           public void actionPerformed(java.awt.event.ActionEvent evt) {
-               sierpinskiArrowHeadMenuItemActionPerformed(evt);
-           }
-       });
-       presetsMenu.add(sierpinskiArrowHeadMenuItem);
-
-       dragonCurveMenuItem.setText("Dragon Curve");
-       dragonCurveMenuItem.addActionListener(new java.awt.event.ActionListener() {
-           public void actionPerformed(java.awt.event.ActionEvent evt) {
-               dragonCurveMenuItemActionPerformed(evt);
-           }
-       });
-       presetsMenu.add(dragonCurveMenuItem);
-
-       fractalPlantMenuItem.setText("Fractal Plant");
-       fractalPlantMenuItem.addActionListener(new java.awt.event.ActionListener() {
-           public void actionPerformed(java.awt.event.ActionEvent evt) {
-               fractalPlantMenuItemActionPerformed(evt);
-           }
-       });
-       presetsMenu.add(fractalPlantMenuItem);
+       
+       JMenu kochMenu = new JMenu();
+       kochMenu.setText("Koch");
+       presetsMenu.add(kochMenu);
+       addItem(kochMenu, Presets.KOCH_CURVE);
+       addItem(kochMenu, Presets.KOCH_CURVE_ALT);
+       addItem(kochMenu, Presets.QUADRATIC_KOCH_ISLAND_1);
+       addItem(kochMenu, Presets.QUADRATIC_KOCH_ISLAND_2);
+       addItem(kochMenu, Presets.QUADRATIC_KOCH_ISLAND_3);
+       addItem(kochMenu, Presets.KOCH_SNOWFLAKE);
+       addItem(kochMenu, Presets.KOCH_ANTI_SNOWFLAKE);
+       addItem(kochMenu, Presets.HONEY_COMB);
+       addItem(kochMenu, Presets.BOARD);
+       
+       JMenu sierpinskiMenu = new JMenu();
+       sierpinskiMenu.setText("Sierpinski");
+       presetsMenu.add(sierpinskiMenu);
+       addItem(sierpinskiMenu, Presets.SIERPINSKI_CURVE);
+       addItem(sierpinskiMenu, Presets.SIERPINSKI_SQUARE);
+       addItem(sierpinskiMenu, Presets.SIERPINSKI_ARROWHEAD);
+       addItem(sierpinskiMenu, Presets.SIERPINSKI_TRIANGLE);
+       
+       JMenu curvesMenu = new JMenu();
+       curvesMenu.setText("Curves");
+       presetsMenu.add(curvesMenu);
+       addItem(curvesMenu, Presets.DRAGON_CURVE);
+       addItem(curvesMenu, Presets.LEVY_CURVE);
+       addItem(curvesMenu, Presets.CROSS_1);
+       addItem(curvesMenu, Presets.CROSS_2);
 
        resetMenuItem.setText("Reset");
        resetMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
@@ -540,72 +514,11 @@ public class GUI extends javax.swing.JFrame {
 
     private void generationsInputActionPerformed(java.awt.event.ActionEvent evt) {                                                 
         // TODO add your handling code here:
-    }                                                
-
-    private void dragonCurveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-    	vectorIField.setText("1");
-    	vectorJField.setText("0");
-    	generationsInput.setText("5");
-    	constantsInputArea.setText("F(MVFWD 3, DRAWLINE),+(RCCW 1.57079632679),-(RCW 1.57079632679)");
-    	variablesInputArea.setText("X,Y");
-    	axiomInputArea.setText("FX");
-    	rulesInputArea.setText("X=X+YF+;\nY=-FX-Y;");
-    }                                                   
+    }                                                                                            
 
     private void fileMenuActionPerformed(java.awt.event.ActionEvent evt) {                                         
         // TODO add your handling code here:
     }                                        
-
-    private void kochCurveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-    	vectorIField.setText("1");
-    	vectorJField.setText("0");
-    	generationsInput.setText("5");
-    	constantsInputArea.setText("+(RCCW 1.5707963268), -(RCW 1.5707963268)");
-    	variablesInputArea.setText("F(MVFWD 5, DRAWLINE)");
-    	axiomInputArea.setText("F");
-    	rulesInputArea.setText("F=F+F-F-F+F;");
-    	load(Presets.ROUND_STAR);
-    }                                                 
-
-    private void fractalBinaryTreeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-    	vectorIField.setText("0");
-    	vectorJField.setText("1");
-    	generationsInput.setText("5");
-    	constantsInputArea.setText("[(PUSHPOS, PUSHDIR, RCCW 0.7853981634), ](POPPOS, POPDIR, RCW 0.7853981634)");
-    	variablesInputArea.setText("A(MVFWD 2, DRAWLINE), B(MVFWD 5, DRAWLINE)");
-    	axiomInputArea.setText("A");
-    	rulesInputArea.setText("B=BB;\nA=B[A]A;");
-    }                                                         
-
-    private void sierpinskiTriangleMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-    	vectorIField.setText("0");
-    	vectorJField.setText("-1");
-    	generationsInput.setText("5");
-    	constantsInputArea.setText("+(RCCW 2.0943951024), -(RCW 2.0943951024)");
-    	variablesInputArea.setText("F(MVFWD 5, DRAWLINE), G(MVFWD 5, DRAWLINE)");
-    	axiomInputArea.setText("F-G-G");
-    	rulesInputArea.setText("F=F-G+F+G-F;\nG=GG;");
-    }                                                          
-
-    private void sierpinskiArrowHeadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {          
-    	vectorIField.setText("1");
-    	vectorJField.setText("0");
-    	generationsInput.setText("5");
-    	constantsInputArea.setText("+(RCCW 1.0471975512),-(RCW 1.0471975512),[(PUSHPOS, PUSHDIR, RCCW 0.7853982),](POPPOS, POPDIR, RCW 0.7853982)");
-    	variablesInputArea.setText("A(MVFWD 5, DRAWLINE), B(MVFWD 5, DRAWLINE)");
-    	axiomInputArea.setText("A");
-    	rulesInputArea.setText("A=B-A-B;\nB=A+B+A;");
-    }                                                           
-
-    private void fractalPlantMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-    	vectorIField.setText("0");
-    	vectorJField.setText("1");
-    	generationsInput.setText("5");
-    	constantsInputArea.setText("+(RCCW 0.436332313),-(RCW 0.436332313),[(PUSHPOS, PUSHDIR), ](POPPOS, POPDIR)");
-    	variablesInputArea.setText("X,F(MVFWD 3, DRAWLINE)");
-    	axiomInputArea.setText("X");
-    	rulesInputArea.setText("X=F+[[X]-X]-F[-FX]+X;F=FF;");
-    }
     
     private void resetInputFields()
     {
@@ -722,10 +635,7 @@ public class GUI extends javax.swing.JFrame {
             {
             	buildButton.setEnabled(true);
             	animateButton.setEnabled(true);
-            	List<Runnable> enqueued = service.shutdownNow();
-            	service = Executors.newFixedThreadPool(1);
-            	for(Runnable runnable : enqueued)
-            		service.execute(runnable);
+            	system.stopAnimation();
             }
             catch(Exception ex)
             {
@@ -834,11 +744,8 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JTextArea constantsInputArea;
     private javax.swing.JLabel constantsLabel;
     private javax.swing.JMenuItem displayActionsMenuItem;
-    private javax.swing.JMenuItem dragonCurveMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem forgeroundMenuItem;
-    private javax.swing.JMenuItem fractalBinaryTreeMenuItem;
-    private javax.swing.JMenuItem fractalPlantMenuItem;
     private javax.swing.JProgressBar generationProgress;
     private javax.swing.JTextField generationsInput;
     private javax.swing.JLabel generationsLabel;
@@ -853,15 +760,12 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JMenuItem kochCurveMenuItem;
     private javax.swing.JMenuBar mainMenu;
     private javax.swing.JMenu presetsMenu;
     private javax.swing.JMenuItem resetMenuItem;
     private javax.swing.JTextArea rulesInputArea;
     private javax.swing.JLabel rulesLabel;
     private javax.swing.JMenuItem saveAs;
-    private javax.swing.JMenuItem sierpinskiArrowHeadMenuItem;
-    private javax.swing.JMenuItem sierpinskiTriangleMenuItem;
     private javax.swing.JTextArea statusArea;
     private javax.swing.JTextField thicknessField;
     private javax.swing.JLabel thicknessLabel;
