@@ -58,6 +58,18 @@ public class LSystem
 		perform(getReplacement());
 	}
 	
+	public void generate(Symbol symbol, int depth)
+	{
+		if(depth == 0)
+			perform(symbol);
+		else
+		{
+			LinkedList<Symbol> replacement = grammar.getReplacement(symbol);
+			for(Symbol s : replacement)
+				generate(s, depth - 1);
+		}
+	}
+	
 	public LinkedList<Symbol> getReplacement()
 	{
 		LinkedList<Symbol> production = axiom;

@@ -248,6 +248,8 @@ public class GUI extends javax.swing.JFrame {
        addItem(plantsMenu, Presets.TRINARY_BUSH);
        addItem(plantsMenu, Presets.FERN);
        addItem(plantsMenu, Presets.BROCCOLI);
+       addItem(plantsMenu, Presets.ALGAE_1);
+       addItem(plantsMenu, Presets.ALGAE_2);
        
        JMenu kochMenu = new JMenu();
        kochMenu.setText("Koch");

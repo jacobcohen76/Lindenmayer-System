@@ -23,8 +23,8 @@ public class StackPanels extends JPanel
 		pointStackPanel = new StackPanel<Point>(n, font, textColor, borderColor, backgroundColor);
 		vectorStackPanel = new StackPanel<Vector>(n, font, textColor, borderColor, backgroundColor);
 		
-		pointStackPanel.setPreferredSize(new Dimension(100, 401));
-		vectorStackPanel.setPreferredSize(new Dimension(100, 401));
+		pointStackPanel.setPreferredSize(new Dimension(150, 401));
+		vectorStackPanel.setPreferredSize(new Dimension(150, 401));
 		
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -40,12 +40,12 @@ public class StackPanels extends JPanel
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(pointStackPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(vectorStackPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+//                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        ));
 	}
 	
 	public void pushPosition(Point pos)

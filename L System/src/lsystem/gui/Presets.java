@@ -57,6 +57,9 @@ public class Presets
 	public static final Preset SIERPINSKI_ARROWHEAD;
 	public static final Preset SIERPINSKI_TRIANGLE;
 	
+	public static final Preset ALGAE_1;
+	public static final Preset ALGAE_2;
+	
 	static
 	{
 		String title = "",
@@ -68,6 +71,87 @@ public class Presets
 			   variables = "",
 			   axiom = "",
 			   rules = "";
+		
+		title = "Algae A";
+		thickness = "1.0";
+		i = "0.0";
+		j = "1.0";
+		n = "20";
+		constants = "+ (RCCW 0.20943951023),\r\n"
+				+ "- (RCW 0.20943951023),\r\n"
+				+ "[(PUSHPOS, PUSHDIR),\r\n"
+				+ "](POPPOS, POPDIR),\r\n"
+				+ "f (MVFWD 10),\r\n"
+				+ "F (MVFWD 10, DRAWLINE)";
+		variables = "a, b, c, d, e, g, h, i,\r\n" + 
+				"j, k, l, m, n, o, p, q,\r\n" + 
+				"r, s, t, u, v";
+		axiom = "aF";
+		rules = "a = FFFFFv[+++h][---q]fb;\r\n" + 
+				"b = FFFFFv[+++h][---q]fc;\r\n" + 
+				"c = FFFFFv[+++fa]fd;\r\n" + 
+				"d = FFFFFv[+++h][---q]fe;\r\n" + 
+				"e = FFFFFv[+++h][---q]fg;\r\n" + 
+				"g = FFFFFv[---fa]fa;\r\n" + 
+				"h = ifFF;\r\n" + 
+				"i = fFFF[--m]j;\r\n" + 
+				"j = fFFF[--n]k;\r\n" + 
+				"k = fFFF[--o]l;\r\n" + 
+				"l = fFFF[--p];\r\n" + 
+				"m = fFn;\r\n" + 
+				"n = fFo;\r\n" + 
+				"o = fFp;\r\n" + 
+				"p = fF;\r\n" + 
+				"q = rfF;\r\n" + 
+				"r = fFFF[++m]s;\r\n" + 
+				"s = fFFF[++n]t;\r\n" + 
+				"t = fFFF[++o]u;\r\n" + 
+				"u = fFFF[++p];\r\n" + 
+				"v = Fv;";
+		ALGAE_1 = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
+		
+		
+		title = "Algae B";
+		thickness = "1.0";
+		i = "0.0";
+		j = "1.0";
+		n = "20";
+		constants = "+ (RCCW 0.20943951023),\r\n"
+				+ "- (RCW 0.20943951023),\r\n"
+				+ "[(PUSHPOS, PUSHDIR),\r\n"
+				+ "](POPPOS, POPDIR),\r\n"
+				+ "f (MVFWD 10),\r\n"
+				+ "F (MVFWD 10, DRAWLINE)";
+		variables = "a, b, c, d, e, g, h, i,\r\n" + 
+				"j, k, l, m, n, o, p, q,\r\n" + 
+				"r, s, t, u, v, w, x, y,"
+				+ "\r\nz";
+		axiom = "aF";
+		rules = "a = FFFFFy[++++n][----t]fb;\r\n" + 
+				"b = +FFFFFy[++++n][----t]fc;\r\n" + 
+				"c = FFFFFy[++++n][----t]fd;\r\n" + 
+				"d = -FFFFFy[++++n][----t]fe;\r\n" + 
+				"e = FFFFFy[++++n][----t]fg;\r\n" + 
+				"g = FFFFFy[+++fa]fh;\r\n" + 
+				"h = FFFFFy[++++n][----t]fi;\r\n" + 
+				"i = +FFFFFy[++++n][----t]fj;\r\n" + 
+				"j = FFFFFy[++++n][----t]fk;\r\n" + 
+				"k = -FFFFFy[++++n][----t]fl;\r\n" + 
+				"l = FFFFFy[++++n][----t]fm;\r\n" + 
+				"m = FFFFFy[---fa]fa;\r\n" + 
+				"n = ofFFF;\r\n" + 
+				"o = fFFFp;\r\n" + 
+				"p = fFFF[-s]q;\r\n" + 
+				"q = fFFF[-s]r;\r\n" + 
+				"r = fFFF[-s];\r\n" + 
+				"s = fFfF;\r\n" + 
+				"t = ufFFF;\r\n" + 
+				"u = fFFFv;\r\n" + 
+				"v = fFFF[+s]w;\r\n" + 
+				"w = fFFF[+s]x;\r\n" + 
+				"x = fFFF[+s];\r\n" + 
+				"y = Fy;";
+		ALGAE_2 = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
 		
 		title = "Koch Curve B";
 		thickness = "1.0";

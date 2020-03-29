@@ -44,7 +44,7 @@ public class Grammar
 		return replacement;
 	}
 	
-	private LinkedList<Symbol> getReplacement(Symbol symbol)
+	public LinkedList<Symbol> getReplacement(Symbol symbol)
 	{
 		return replacementMap.get(symbol);
 	}

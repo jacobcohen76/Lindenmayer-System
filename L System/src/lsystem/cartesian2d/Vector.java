@@ -166,6 +166,6 @@ public class Vector implements Cloneable
 	
 	public String toString()
 	{
-		return "<" + i + ", " + j + ">";
+		return "<" + String.format("%.2f", i) + ", " + String.format("%.2f", j) + ">";
 	}
 }

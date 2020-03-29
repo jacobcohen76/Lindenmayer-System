@@ -6,7 +6,9 @@
 package lsystem.gui.animations;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridLayout;
 
 /**
  *
@@ -53,31 +55,37 @@ public class TimerSettingsPanel extends javax.swing.JPanel {
         
         delayTimeSlider.setFocusable(false);
         actionSpeedSlider.setFocusable(false);
-
-        setLayout(new java.awt.GridLayout(2, 1));
-
-        actionSpeedPanel.setLayout(new java.awt.BorderLayout());
-
+        
+        GridLayout layout = new GridLayout(4, 1);
+        layout.setVgap(0);
+        layout.setHgap(0);
+        setLayout(layout);
+        
         actionSpeedLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         actionSpeedLabel.setText("Action Speed");
         actionSpeedLabel.setFont(font);
         actionSpeedLabel.setForeground(fontColor);
-        actionSpeedPanel.add(actionSpeedLabel, java.awt.BorderLayout.PAGE_START);
-        actionSpeedPanel.add(actionSpeedSlider, java.awt.BorderLayout.CENTER);
-
-        add(actionSpeedPanel);
-
-        delayTimePanel.setLayout(new java.awt.BorderLayout());
-
+        actionSpeedPanel.add(actionSpeedLabel);
+        actionSpeedPanel.add(actionSpeedSlider);
+        
         delayTimeLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         delayTimeLabel.setText("Delay Time");
         delayTimeLabel.setFont(font);
         delayTimeLabel.setForeground(fontColor);
-        delayTimePanel.add(delayTimeLabel, java.awt.BorderLayout.PAGE_START);
-        delayTimePanel.add(delayTimeSlider, java.awt.BorderLayout.CENTER);
+        delayTimePanel.add(delayTimeLabel);
+        delayTimePanel.add(delayTimeSlider);
+        
+        add(actionSpeedLabel);
+        add(actionSpeedSlider);
+        add(delayTimeLabel);
+        add(delayTimeSlider);
 
-        add(delayTimePanel);
-    }// </editor-fold>        
+    }// </editor-fold>
+    
+    public Dimension getPreferredSize()
+    {
+    	return new Dimension(400, 150);
+    }
     
     public int getActionSpeed()
     {

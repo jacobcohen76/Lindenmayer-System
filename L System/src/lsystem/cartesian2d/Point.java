@@ -95,6 +95,6 @@ public class Point implements Cloneable
 	
 	public String toString()
 	{
-		return "(" + x + ", " + y + ")";
+		return "(" + String.format("%.2f", x) + ", " + String.format("%.2f", y) + ")";
 	}
 }
