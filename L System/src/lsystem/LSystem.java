@@ -58,7 +58,7 @@ public class LSystem
 		perform(getReplacement());
 	}
 	
-	public void generate(Symbol symbol, int depth)
+	private void generate(Symbol symbol, int depth)
 	{
 		if(depth == 0)
 			perform(symbol);
@@ -68,6 +68,12 @@ public class LSystem
 			for(Symbol s : replacement)
 				generate(s, depth - 1);
 		}
+	}
+	
+	public void generate(int depth)
+	{
+		for(Symbol symbol : axiom)
+			generate(symbol, depth);
 	}
 	
 	public LinkedList<Symbol> getReplacement()
@@ -197,7 +203,7 @@ public class LSystem
 			min = min(min, line.a.x, line.b.x);
 			max = max(max, line.a.x, line.b.x);
 		}
-		return (int) Math.round(max - min) + 3;
+		return (int) (Math.round(max - min) + 3 + 2 * LineSegment.thickness);
 	}
 	
 	private int getHeight()
@@ -209,7 +215,7 @@ public class LSystem
 			min = min(min, line.a.y, line.b.y);
 			max = max(max, line.a.y, line.b.y);
 		}
-		return (int) Math.round(max - min) + 3;
+		return (int) (Math.round(max - min) + 3 + 2 * LineSegment.thickness);
 	}
 	
 	private int getXShift()
@@ -217,7 +223,7 @@ public class LSystem
 		double min = Double.POSITIVE_INFINITY;
 		for(LineSegment line : lines)
 			min = min(min, line.a.x, line.b.x);
-		return (int) Math.round(min - 1);
+		return (int) Math.ceil(min - 1 - LineSegment.thickness);
 	}
 	
 	private int getYShift()
@@ -225,7 +231,7 @@ public class LSystem
 		double max = Double.NEGATIVE_INFINITY;
 		for(LineSegment line : lines)
 			max = max(max, line.a.y, line.b.y);
-		return (int) Math.round(max + 1);
+		return (int) Math.ceil(max + LineSegment.thickness);
 	}
 	
 	private void render(BufferedImage image, int xShift, int yShift, float thickness, Color foreground, Color background)
@@ -234,7 +240,7 @@ public class LSystem
 		g.setColor(background);
 		g.fillRect(0, 0, image.getWidth(), image.getHeight());
 		g.setColor(foreground);
-		g.setStroke(new BasicStroke(thickness));
+		g.setStroke(new BasicStroke(LineSegment.thickness));
 		for(LineSegment line : lines)
 			line.render(g, xShift, yShift);
 	}

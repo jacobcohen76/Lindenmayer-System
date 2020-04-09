@@ -1,7 +1,9 @@
 package lsystem.gui.animations;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -60,7 +62,7 @@ public class MovementPanel extends JPanel
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
 		for(LineSegment line : lines)
-			render(line, g);
+			render(line, g, LineSegment.thickness);
 		
 		if(renderingLine)
 			render(g, prev, increment, D, shiftX, shiftY);
@@ -212,8 +214,11 @@ public class MovementPanel extends JPanel
 		int x2 = (int) Math.round(origin.x + v.i - shiftX);
 		int y2 = (int) Math.round(shiftY - (origin.y + v.j));
 		
-		g.setColor(c);
-		g.drawLine(x1, y1, x2, y2);
+		Graphics2D g2D = (Graphics2D) g;
+		BasicStroke stroke = new BasicStroke(1.0f);
+		g2D.setStroke(stroke);
+		g2D.setColor(c);
+		g2D.drawLine(x1, y1, x2, y2);
 	}
 	
 	private void render(Graphics g, Point origin, Point destination, Color c, int shiftX, int shiftY)
@@ -223,8 +228,11 @@ public class MovementPanel extends JPanel
 		int x2 = (int) Math.round(destination.x - shiftX);
 		int y2 = (int) Math.round(shiftY - destination.y);
 		
-		g.setColor(c);
-		g.drawLine(x1, y1, x2, y2);
+		Graphics2D g2D = (Graphics2D) g;
+		BasicStroke stroke = new BasicStroke(1.0f);
+		g2D.setStroke(stroke);
+		g2D.setColor(c);
+		g2D.drawLine(x1, y1, x2, y2);
 	}
 	
 	public void draw(LineSegment line)
@@ -233,13 +241,16 @@ public class MovementPanel extends JPanel
 		repaint();
 	}
 	
-	private void render(LineSegment line, Graphics g)
+	private void render(LineSegment line, Graphics g, float thickness)
 	{
 		g.setColor(D);
 		int x1 = (int) Math.round(line.a.x - shiftX);
 		int y1 = (int) Math.round(shiftY - line.a.y);
 		int x2 = (int) Math.round(line.b.x - shiftX);
 		int y2 = (int) Math.round(shiftY - line.b.y);
-		g.drawLine(x1, y1, x2, y2);
+		Graphics2D g2D = (Graphics2D) g;
+		BasicStroke stroke = new BasicStroke(thickness);
+		g2D.setStroke(stroke);
+		g2D.drawLine(x1, y1, x2, y2);
 	}
 }

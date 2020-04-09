@@ -1,5 +1,6 @@
 package lsystem.gui;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -59,6 +60,12 @@ public class Presets
 	
 	public static final Preset ALGAE_1;
 	public static final Preset ALGAE_2;
+	
+	private static void setColors()
+	{
+		ICY_FRACTAL.foreground = Color.WHITE;
+		ICY_FRACTAL.background = new Color(24, 1, 115);
+	}
 	
 	static
 	{
@@ -419,8 +426,8 @@ public class Presets
 		i = "1.0";
 		j = "0.0";
 		n = "4";
-		constants = "+ (RCCW 1.57079632679),\r\n"
-	              + "- (RCW 1.57079632679),\r\n"
+		constants = "+ (RCCW 0.62831853072),\r\n"
+	              + "- (RCW 0.62831853072),\r\n"
 				  + "| (RCCW 3.1415926536)";
 		variables = "F (MVFWD 10, DRAWLINE)";
 		axiom = "F + + F + + F + + F + + F";
@@ -449,7 +456,7 @@ public class Presets
 	  			  + "F (MVFWD 10, DRAWLINE)";
 		variables = "X, Y";
 		axiom = "X F";
-		rules = "X = X + Y F + + Y F _ F X _ _ F X F X - Y F +;\r\n"
+		rules = "X = X + Y F + + Y F - F X - - F X F X - Y F +;\r\n"
 			  + "Y = - F X + Y F Y F + + Y F + F X - - F X - Y;";
 		HEXAGONAL_GOSPER = new Preset(title, thickness, i, j, n, constants, variables, axiom, rules);
 		
@@ -553,6 +560,7 @@ public class Presets
 						   + "B = + A - B B - - B - A + + A + B;";
 		
 		ICY_FRACTAL = new Preset();
+		ICY_FRACTAL.title = "Icy Fractal";
 		ICY_FRACTAL.i = "0";
 		ICY_FRACTAL.j = "1";
 		ICY_FRACTAL.n = "4";
@@ -575,6 +583,7 @@ public class Presets
 		FRACTAL_TREE.rules = "F = F [ + F F ] [ - F F ] F [ - F ] [ + F ] F;";
 		
 		PENTADENDRITE = new Preset();
+		PENTADENDRITE.title = "Pentadendrite";
 		PENTADENDRITE.i = "0";
 		PENTADENDRITE.j = "1";
 		PENTADENDRITE.n = "4";
@@ -644,6 +653,7 @@ public class Presets
 		FRACTAL_TILES.axiom = "F + F + F + F";
 		FRACTAL_TILES.rules = "F = F F + F - F + F + F F;";
 		
+		setColors();		
 	}
 	
 	public static void write(Preset preset, String path) throws IOException

@@ -16,4 +16,9 @@ public class ScaleLine implements Action
 	{
 		MoveForward.scale_factor *= amount;
 	}
+	
+	public String toString()
+	{
+		return "SCALE " + amount;
+	}
 }

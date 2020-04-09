@@ -6,9 +6,14 @@
 package lsystem.gui;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,6 +27,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import lsystem.LSystem;
 import lsystem.Parser;
+import lsystem.cartesian2d.LineSegment;
 import lsystem.cartesian2d.Point;
 import lsystem.cartesian2d.Vector;
 
@@ -50,6 +56,9 @@ public class GUI extends javax.swing.JFrame {
        });
        menu.add(item);
    }
+   
+   private JMenuItem importItem;
+   private JMenuItem exportItem;
 
    /**
     * This method is called from within the constructor to initialize the form.
@@ -100,6 +109,8 @@ public class GUI extends javax.swing.JFrame {
        colorsMenu = new javax.swing.JMenu();
        forgeroundMenuItem = new javax.swing.JMenuItem();
        backgroundMenuItem = new javax.swing.JMenuItem();
+       importItem = new JMenuItem();
+       exportItem = new JMenuItem();
        
        plantsMenu = new javax.swing.JMenu();
 
@@ -186,7 +197,7 @@ public class GUI extends javax.swing.JFrame {
        });
 
        generationProgress.setFocusable(false);
-
+       
        statusArea.setEditable(false);
        statusArea.setColumns(20);
        statusArea.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
@@ -229,7 +240,7 @@ public class GUI extends javax.swing.JFrame {
            }
        });
 
-       saveAs.setText("Save As");
+       saveAs.setText("Render");
        saveAs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
        saveAs.addActionListener(new java.awt.event.ActionListener() {
            public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -237,6 +248,26 @@ public class GUI extends javax.swing.JFrame {
            }
        });
        fileMenu.add(saveAs);
+       
+       importItem.setText("Import");
+       exportItem.setText("Export");
+       
+       importItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
+       exportItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+       
+       importItem.addActionListener(new java.awt.event.ActionListener() {
+           public void actionPerformed(java.awt.event.ActionEvent evt) {
+               importItemActionPerformed(evt);
+           }
+       });
+       exportItem.addActionListener(new java.awt.event.ActionListener() {
+           public void actionPerformed(java.awt.event.ActionEvent evt) {
+               exportItemActionPerformed(evt);
+           }
+       });
+       
+       fileMenu.add(importItem);
+       fileMenu.add(exportItem);
        
        presetsMenu.setText("Load Presets");
        plantsMenu.setText("Plants");
@@ -263,6 +294,7 @@ public class GUI extends javax.swing.JFrame {
        addItem(kochMenu, Presets.KOCH_ANTI_SNOWFLAKE);
        addItem(kochMenu, Presets.HONEY_COMB);
        addItem(kochMenu, Presets.BOARD);
+       addItem(kochMenu, Presets.ICY_FRACTAL);
        
        JMenu sierpinskiMenu = new JMenu();
        sierpinskiMenu.setText("Sierpinski");
@@ -279,6 +311,9 @@ public class GUI extends javax.swing.JFrame {
        addItem(curvesMenu, Presets.LEVY_CURVE);
        addItem(curvesMenu, Presets.CROSS_1);
        addItem(curvesMenu, Presets.CROSS_2);
+       addItem(curvesMenu, Presets.PENTAPLEXITY);
+       addItem(curvesMenu, Presets.PENTADENDRITE);
+       addItem(curvesMenu, Presets.HEXAGONAL_GOSPER);
 
        resetMenuItem.setText("Reset");
        resetMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
@@ -452,7 +487,6 @@ public class GUI extends javax.swing.JFrame {
     private BufferedImage image = null;
     private ExecutorService service = Executors.newFixedThreadPool(1);
     private void saveAsActionPerformed(java.awt.event.ActionEvent evt) {                                       
-        // TODO add your handling code here:
     	if(system == null)
     	{
     		display("Error, you must generate an LSystem before you can render an image.", FAILURE);
@@ -462,6 +496,7 @@ public class GUI extends javax.swing.JFrame {
     		buildButton.setEnabled(false);
     		
         	JFileChooser chooser = new JFileChooser();
+        	chooser.setFileFilter(new FileNameExtensionFilter("Image Files (*.png,*.jpg,*.jpeg,*.jpe,*.jfif)", ImageIO.getReaderFileSuffixes()));        	
     		chooser.showOpenDialog(null);
     		chooser.setFileHidingEnabled(true);
     		chooser.addChoosableFileFilter(new FileNameExtensionFilter("Images", new String[] {"png"}));
@@ -469,15 +504,26 @@ public class GUI extends javax.swing.JFrame {
     		
     		if(selected != null)
     		{
-	    		Thread thread = new SaveImage(selected);
-//	    		thread.setPriority(Thread.);
-//	    		thread.setPriority(Thread.MAX_PRIORITY);
-	    		service.execute(thread);
+	    			Thread thread = new SaveImage(selected);
+	    			service.execute(thread);
     		}
     		else
     		{
     			buildButton.setEnabled(true);
     		}
+    	}
+    }
+    
+    private float getThickness()
+    {
+    	try
+    	{
+    		float f = Float.valueOf(thicknessField.getText());
+    		return f;
+    	}
+    	catch(Exception ex)
+    	{
+    		throw new Error("Error, expected a float in the thickness field, instead got '" + thicknessField.getText() + "'");
     	}
     }
     
@@ -495,10 +541,11 @@ public class GUI extends javax.swing.JFrame {
     		try {
     			system.reset();
     			system.setN(getNumGenerations());
+    			LineSegment.thickness = getThickness();
     			system.origin = new Point(0, 0);
     			system.initial = getVectorFromInput().normalize();
     			display("Generating Replacement String...", Color.BLACK);
-    			system.generate();
+    			system.generate(getNumGenerations());
     			display("Rendering Image...", Color.BLACK);
     			image = system.getImage(thickness, foregroundColor, backgroundColor);
 				ImageIO.write(image , "png", selected);
@@ -608,11 +655,24 @@ public class GUI extends javax.swing.JFrame {
     	
     	public void run()
     	{
-        	buildButton.setEnabled(false);
-        	animateButton.setEnabled(false);
-    		system.animate(foregroundColor, backgroundColor, animationClosureEvent);
-    		buildButton.setEnabled(true);
-        	animateButton.setEnabled(true);
+    		try
+    		{
+	        	LineSegment.thickness = getThickness();
+	        	system.setN(getNumGenerations());
+	        	buildButton.setEnabled(false);
+	        	animateButton.setEnabled(false);
+	    		system.animate(foregroundColor, backgroundColor, animationClosureEvent);
+	    		buildButton.setEnabled(true);
+	        	animateButton.setEnabled(true);
+    		}
+    		catch(Exception ex)
+    		{
+        		display(ex.getMessage(), FAILURE);
+    		}
+    		catch(Error e)
+    		{
+    			display(e.getMessage(), FAILURE);
+    		}
     	}
     }
     
@@ -625,7 +685,9 @@ public class GUI extends javax.swing.JFrame {
     	constantsInputArea.setText(preset.constants);
     	variablesInputArea.setText(preset.variables);
     	axiomInputArea.setText(preset.axiom);
-    	rulesInputArea.setText(preset.rules);    	
+    	rulesInputArea.setText(preset.rules);
+    	foregroundColor = preset.foreground;
+    	backgroundColor = preset.background;
     }
     
     private java.awt.event.WindowListener animationClosureEvent = new java.awt.event.WindowAdapter()
@@ -698,6 +760,86 @@ public class GUI extends javax.swing.JFrame {
     	service.execute(new Animate(system));
     	
     }
+    
+	private void importItemActionPerformed(ActionEvent evt) {
+		// TODO Auto-generated method stub
+		JFileChooser chooser = new JFileChooser();
+    	chooser.setFileFilter(new FileNameExtensionFilter("L-System Ruleset (*.lsrs)", new String[] { "lsrs" }));        	
+		chooser.showOpenDialog(null);
+		chooser.setFileHidingEnabled(true);
+		
+		File selected = chooser.getSelectedFile();
+		
+		if(selected != null)
+		{
+			load(selected);
+		}
+	}
+	
+	private void exportItemActionPerformed(ActionEvent evt) {
+		// TODO Auto-generated method stub
+		JFileChooser chooser = new JFileChooser();
+    	chooser.setFileFilter(new FileNameExtensionFilter("L-System Ruleset (*.lsrs)", new String[] { "lsrs" }));        	
+		chooser.showOpenDialog(null);
+		chooser.setFileHidingEnabled(true);
+		
+		File selected = chooser.getSelectedFile();
+		
+		if(selected != null)
+		{
+			export(selected);
+		}
+	}
+	
+	private void export(File selected)
+	{
+		try {
+			String name = selected.getName();
+			if(name.contains(".lsrs") == false)
+				name += ".lsrs";
+			selected = new File(selected.getParent() + "\\" + name);
+			System.out.println(selected);
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(selected));
+			Preset preset = getCurrentSettings();
+			preset.title = selected.getName().substring(0, selected.getName().indexOf('.'));
+			oos.writeObject(preset);
+			oos.close();
+			display("The current program state successfully saved to " + selected, SUCCESS);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			display("An unexpected error occured when trying to save the current program state to " + selected, FAILURE);
+		}
+	}
+	
+	private Preset getCurrentSettings()
+	{
+		Preset preset = new Preset();
+		preset.i = vectorIField.getText();
+		preset.j = vectorJField.getText();
+		preset.thickness = thicknessField.getText();
+		preset.n = generationsInput.getText();
+		preset.constants = constantsInputArea.getText();
+		preset.variables = variablesInputArea.getText();
+		preset.axiom = axiomInputArea.getText();
+		preset.rules = rulesInputArea.getText();
+		preset.foreground = foregroundColor;
+		preset.background = backgroundColor;
+		return preset;
+	}
+	
+	private void load(File selected)
+	{
+		try {
+			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(selected));
+			Preset preset = (Preset) ois.readObject();
+			load(preset);
+			ois.close();
+			display("Program state successfully loaded from " + selected, SUCCESS);
+		} catch (Exception e)
+		{
+			display("An unexpected error occured when trying to load the program state from " + selected, FAILURE);
+		}
+	}
 
     /**
      * @param args the command line arguments

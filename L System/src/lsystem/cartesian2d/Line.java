@@ -36,6 +36,8 @@ public class Line
 		return r(t);
 	}
 	
+	public static float thickness = 1.0f;
+	
 	public String toString()
 	{
 		return "r(t) = " + v + " * t + " + r0;
