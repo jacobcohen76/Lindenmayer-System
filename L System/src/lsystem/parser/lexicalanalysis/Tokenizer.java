@@ -62,6 +62,7 @@ public class Tokenizer
 		alphabet.add(';');
 		alphabet.add('(');
 		alphabet.add(')');
+		alphabet.add('%');
 		alphabet.add(' ');
 		alphabet.add('\t');
 		alphabet.add('\n');
@@ -176,6 +177,8 @@ public class Tokenizer
 			type = TokenType.EQUALS;
 		else if(lexeme.equals("$"))
 			type = TokenType.EOI;
+		else if(lexeme.equals("%"))
+			type = TokenType.PERCENT;
 		else if(lexeme.equals(","))
 			type = TokenType.COMMA;
 		else if(lexeme.equals("("))
@@ -212,7 +215,7 @@ public class Tokenizer
 	
 	private boolean isDelimeter(char c)
 	{
-		return isEquals(c) || isWhiteSpace(c) || isEOI(c) || isComma(c) || isSemiColon(c) || c == '(' || c == ')';
+		return isEquals(c) || isWhiteSpace(c) || isEOI(c) || isComma(c) || isSemiColon(c) || c == '(' || c == ')' || c == '%';
 	}
 	
 	private boolean isSemiColon(char c)

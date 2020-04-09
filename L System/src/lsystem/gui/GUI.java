@@ -23,6 +23,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import lsystem.LSystem;
@@ -59,6 +60,9 @@ public class GUI extends javax.swing.JFrame {
    
    private JMenuItem importItem;
    private JMenuItem exportItem;
+   
+   private JRadioButtonMenuItem degreeMode;
+   private JRadioButtonMenuItem radianMode;
 
    /**
     * This method is called from within the constructor to initialize the form.
@@ -135,6 +139,8 @@ public class GUI extends javax.swing.JFrame {
        actionsHelpArea.setColumns(20);
        actionsHelpArea.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
        actionsHelpArea.setRows(5);
+       
+       //TODO
        actionsHelpArea.setText("Actions\n\n\tKEYWORD:\t\tPARAMETER:\t\tDESCRIPTION:\n\t\t\t\t\t\t\t\n\tRCCW\t\t\tNUM\t\t\tRotates direction parameter is in radians\n\tRCW\t\t\tNUM\t\t\tRotates direction parameter is in radians\n\tMVFWD\t\t\tNUM\t\t\tMoves position forward by some amount\n\n\tDRAWLINE\t\tNONE\t\t\tDraws a line from prev to current position\n\tPUSHDIR\t\t\tNONE\t\t\tPushes current direction onto the stack\n\tPUSHPOS\t\t\tNONE\t\t\tPushes current position onto the stack\n\tPOPDIR\t\t\tNONE\t\t\tPops last direction from the stack\n\tPOPPOS\t\t\tNONE\t\t\tPops last position from the stack\n\n\n\t");
        actionsHelpArea.setFocusable(false);
 
@@ -361,6 +367,27 @@ public class GUI extends javax.swing.JFrame {
        colorsMenu.add(backgroundMenuItem);
 
        mainMenu.add(colorsMenu);
+       
+       JMenu angleMode = new JMenu("Angle Type");
+       mainMenu.add(angleMode);
+       
+       degreeMode = new JRadioButtonMenuItem("Degrees", false);
+       radianMode = new JRadioButtonMenuItem("Radians", true);
+       
+       angleMode.add(radianMode);
+       angleMode.add(degreeMode);
+       
+       radianMode.addActionListener(new java.awt.event.ActionListener() {
+    	   public void actionPerformed(java.awt.event.ActionEvent evt) {
+    		   radianModeActionPerformed(evt);
+    	   }
+       });
+       
+       degreeMode.addActionListener(new java.awt.event.ActionListener() {
+    	   public void actionPerformed(java.awt.event.ActionEvent evt) {
+    		   degreeModeActionPerformed(evt);
+    	   }
+       });
 
        setJMenuBar(mainMenu);
 
@@ -496,6 +523,7 @@ public class GUI extends javax.swing.JFrame {
     		buildButton.setEnabled(false);
     		
         	JFileChooser chooser = new JFileChooser();
+    		chooser.setCurrentDirectory(mostRecentDirectory);
         	chooser.setFileFilter(new FileNameExtensionFilter("Image Files (*.png,*.jpg,*.jpeg,*.jpe,*.jfif)", ImageIO.getReaderFileSuffixes()));        	
     		chooser.showOpenDialog(null);
     		chooser.setFileHidingEnabled(true);
@@ -506,6 +534,7 @@ public class GUI extends javax.swing.JFrame {
     		{
 	    			Thread thread = new SaveImage(selected);
 	    			service.execute(thread);
+	    			mostRecentDirectory = selected.getParentFile();
     		}
     		else
     		{
@@ -562,11 +591,9 @@ public class GUI extends javax.swing.JFrame {
     }
 
     private void generationsInputActionPerformed(java.awt.event.ActionEvent evt) {                                                 
-        // TODO add your handling code here:
     }                                                                                            
 
     private void fileMenuActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        // TODO add your handling code here:
     }                                        
     
     private void resetInputFields()
@@ -585,7 +612,6 @@ public class GUI extends javax.swing.JFrame {
     }
 
     private void resetMenuItemActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        // TODO add your handling code here:
     	resetInputFields();
     }                                                
     
@@ -688,6 +714,9 @@ public class GUI extends javax.swing.JFrame {
     	rulesInputArea.setText(preset.rules);
     	foregroundColor = preset.foreground;
     	backgroundColor = preset.background;
+    	degreeMode.setSelected(preset.degreemode);
+    	radianMode.setSelected(!preset.degreemode);
+    	Parser.DEGREEMODE = preset.degreemode;
     }
     
     private java.awt.event.WindowListener animationClosureEvent = new java.awt.event.WindowAdapter()
@@ -740,30 +769,25 @@ public class GUI extends javax.swing.JFrame {
     }
 
     private void vectorJFieldActionPerformed(java.awt.event.ActionEvent evt) {                                             
-        // TODO add your handling code here:
     }                                            
 
     private void vectorIFieldActionPerformed(java.awt.event.ActionEvent evt) {                                             
-        // TODO add your handling code here:
     }                                            
 
 
     private void displayActionsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {                                                       
-        // TODO add your handling code here:
         actionsHelpFrame.setVisible(true);
         actionsHelpFrame.pack();
         actionsHelpFrame.setResizable(false);
     }
     
     private void animateButtonActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        // TODO add your handling code here:
     	service.execute(new Animate(system));
-    	
     }
     
 	private void importItemActionPerformed(ActionEvent evt) {
-		// TODO Auto-generated method stub
 		JFileChooser chooser = new JFileChooser();
+		chooser.setCurrentDirectory(mostRecentDirectory);
     	chooser.setFileFilter(new FileNameExtensionFilter("L-System Ruleset (*.lsrs)", new String[] { "lsrs" }));        	
 		chooser.showOpenDialog(null);
 		chooser.setFileHidingEnabled(true);
@@ -777,8 +801,8 @@ public class GUI extends javax.swing.JFrame {
 	}
 	
 	private void exportItemActionPerformed(ActionEvent evt) {
-		// TODO Auto-generated method stub
 		JFileChooser chooser = new JFileChooser();
+		chooser.setCurrentDirectory(mostRecentDirectory);
     	chooser.setFileFilter(new FileNameExtensionFilter("L-System Ruleset (*.lsrs)", new String[] { "lsrs" }));        	
 		chooser.showOpenDialog(null);
 		chooser.setFileHidingEnabled(true);
@@ -791,6 +815,8 @@ public class GUI extends javax.swing.JFrame {
 		}
 	}
 	
+	private File mostRecentDirectory = null;
+	
 	private void export(File selected)
 	{
 		try {
@@ -798,15 +824,14 @@ public class GUI extends javax.swing.JFrame {
 			if(name.contains(".lsrs") == false)
 				name += ".lsrs";
 			selected = new File(selected.getParent() + "\\" + name);
-			System.out.println(selected);
 			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(selected));
 			Preset preset = getCurrentSettings();
 			preset.title = selected.getName().substring(0, selected.getName().indexOf('.'));
 			oos.writeObject(preset);
 			oos.close();
 			display("The current program state successfully saved to " + selected, SUCCESS);
+			mostRecentDirectory = selected.getParentFile();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			display("An unexpected error occured when trying to save the current program state to " + selected, FAILURE);
 		}
 	}
@@ -824,6 +849,7 @@ public class GUI extends javax.swing.JFrame {
 		preset.rules = rulesInputArea.getText();
 		preset.foreground = foregroundColor;
 		preset.background = backgroundColor;
+		preset.degreemode = Parser.DEGREEMODE;
 		return preset;
 	}
 	
@@ -839,6 +865,18 @@ public class GUI extends javax.swing.JFrame {
 		{
 			display("An unexpected error occured when trying to load the program state from " + selected, FAILURE);
 		}
+	}
+	
+	private void radianModeActionPerformed(ActionEvent evt) {
+		   degreeMode.setSelected(false);
+		   radianMode.setSelected(true);
+		   Parser.DEGREEMODE = false;
+	}
+	
+	private void degreeModeActionPerformed(ActionEvent evt) {
+		   degreeMode.setSelected(true);
+		   radianMode.setSelected(false);
+		   Parser.DEGREEMODE = true;
 	}
 
     /**

@@ -25,6 +25,7 @@ import lsystem.parser.lexicalanalysis.TokenType;
 public class Parser
 {
 	private static final Dictionary<String> KEYWORDS = new Dictionary<String>();
+	public static boolean DEGREEMODE = false;
 	
 	static
 	{
@@ -172,6 +173,12 @@ public class Parser
 		return ActionList;
 	}
 	
+	private double angle(double num)
+	{
+		return DEGREEMODE ? (num * Math.PI / 180.0) : num;
+	}
+	
+	//Action = KEYWORD NUM NUM PERCENT
 	//Action = KEYWORD NUM
 	//Action = KEYWORD
 	private Action parseAction()
@@ -180,15 +187,33 @@ public class Parser
 		switch(t.lexeme)
 		{
 		case "RCCW":
-			return new RotateCCW(parseNum());
+			RotateCCW rccw = new RotateCCW(angle(parseNum()));
+			if(lexer.peek().type == TokenType.NUM)
+			{
+				rccw.variation = parseNum() / 100.0;
+				lexer.expect(TokenType.PERCENT);
+			}
+			return rccw;
 		case "RCW":
-			return new RotateCW(parseNum());
+			RotateCW rcw = new RotateCW(angle(parseNum()));
+			if(lexer.peek().type == TokenType.NUM)
+			{
+				rcw.variation = parseNum() / 100.0;
+				lexer.expect(TokenType.PERCENT);
+			}
+			return rcw;
 		case "INCANGLE":
-			return new IncrementAngle(parseNum());
+			return new IncrementAngle(angle(parseNum()));
 		case "DECANGLE":
-			return new DecrementAngle(parseNum());
+			return new DecrementAngle(angle(parseNum()));
 		case "MVFWD":
-			return new MoveForward(parseNum());
+			MoveForward mvfwd = new MoveForward(parseNum());
+			if(lexer.peek().type == TokenType.NUM)
+			{
+				mvfwd.variation = parseNum() / 100.0;
+				lexer.expect(TokenType.PERCENT);
+			}
+			return mvfwd;
 		case "SCALE":
 			return new ScaleLine(parseNum());
 		case "SWAP":
@@ -237,6 +262,9 @@ public class Parser
 			lexer = new LexicalAnalyzer(rulesInput, constants, variables, keyWords);
 			Grammar grammar = parseGrammar();
 			
+			if(grammar.definedAll(variables) == false)
+				throw new Error("Error, not all variables were defined. Define the replacement rule for each non-terminal symbol.");
+			
 			currentlyParsing = "Axiom";
 			lexer = new LexicalAnalyzer(axiomInput, constants, variables, keyWords);
 			LinkedList<Symbol> axiom = parseAxiom();
@@ -266,10 +294,13 @@ public class Parser
 	private LinkedList<ProductionRule> parseRuleList()
 	{
 		LinkedList<ProductionRule> RuleList = new LinkedList<ProductionRule>();
-		RuleList.add(parseProductionRule());
-		Token t = lexer.peek();
-		if(t.type == TokenType.CONSTANT || t.type == TokenType.VARIABLE)
-			RuleList.addAll(parseRuleList());
+		if(lexer.peek().type != TokenType.EOI)
+		{
+			RuleList.add(parseProductionRule());
+			Token t = lexer.peek();
+			if(t.type == TokenType.CONSTANT || t.type == TokenType.VARIABLE)
+				RuleList.addAll(parseRuleList());
+		}
 		return RuleList;
 	}
 	
@@ -293,7 +324,11 @@ public class Parser
 	{
 		Token t = lexer.getToken();
 		LinkedList<Symbol> RHS = new LinkedList<Symbol>();
-		if(t.type == TokenType.CONSTANT || t.type == TokenType.VARIABLE)
+		if(t.type == TokenType.SEMICOLON)
+		{
+			lexer.ungetToken(t);
+		}
+		else if(t.type == TokenType.CONSTANT || t.type == TokenType.VARIABLE)
 		{
 			RHS.add(new Symbol(t.lexeme));
 			t = lexer.peek();

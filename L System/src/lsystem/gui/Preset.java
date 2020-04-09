@@ -9,6 +9,7 @@ public class Preset implements Serializable
 	
 	public String title, thickness, i, j, n, constants, variables, axiom, rules;
 	public Color foreground = Color.GREEN, background = Color.BLACK;
+	public boolean degreemode = false;
 	
 	public Preset(String title, String thickness, String i, String j, String n, String constants, String variables, String axiom, String rules)
 	{

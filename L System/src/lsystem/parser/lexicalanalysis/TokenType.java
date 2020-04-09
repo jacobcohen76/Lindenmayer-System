@@ -13,5 +13,6 @@ public enum TokenType
 	NUM,
 	ID,
 	EOI,
-	DEFAULT
+	DEFAULT,
+	PERCENT;
 }

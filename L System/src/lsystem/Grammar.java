@@ -48,4 +48,12 @@ public class Grammar
 	{
 		return replacementMap.get(symbol);
 	}
+	
+	public boolean definedAll(Dictionary<String> variables)
+	{
+		for(String variable : variables)
+			if(replacementMap.containsKey(new Symbol(variable)) == false)
+				return false;
+		return true;
+	}
 }
