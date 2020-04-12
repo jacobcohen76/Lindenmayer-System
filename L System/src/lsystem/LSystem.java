@@ -372,11 +372,30 @@ public class LSystem
 				}
 			}
 		}
+		else if(biggestGensFirst == true)
+		{
+			System.out.println("biggest first");
+			for(int i = 0; i <= n; i++)
+			{
+				Iterator<LineSegment> itr = lines.iterator();
+				while(itr.hasNext())
+				{
+					LineSegment line = itr.next();
+					if(line.n == i)
+					{
+						line.render(g, xShift, yShift);
+						itr.remove();
+					}
+				}
+			}
+		}
 		else
 			for(LineSegment line : lines)
 				line.render(g, xShift, yShift);
 	}
 	
+	
+	public boolean biggestGensFirst = true;
 	public int padY = 4;
 	public int padX = 4;
 	
