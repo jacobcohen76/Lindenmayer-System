@@ -1,17 +1,32 @@
 package lsystem.cartesian2d;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 public class LineSegment extends Line
 {
 	public Point a;
 	public Point b;
+	public Color color;
+	public float thickness;
+	private BasicStroke stroke;
+	public int n;
 	
-	public LineSegment(Point a, Point b)
+	public LineSegment(Point a, Point b, Color rgb, float thickness, int n)
 	{
 		super(new Vector(a, b), new Vector(a.x, a.y));
 		this.a = a;
 		this.b = b;
+		color = rgb;
+		stroke = new BasicStroke(thickness);
+		this.thickness = thickness;
+		this.n = n;
+	}
+	
+	public LineSegment(Point a, Point b, Color rgb, float thickness)
+	{
+		this(a, b, rgb, thickness, -1);
 	}
 	
 	public Point getMidPoint()
@@ -48,11 +63,15 @@ public class LineSegment extends Line
 	
 	public void render(Graphics2D g, int xShift, int yShift)
 	{
+		Color temp = g.getColor();
+		g.setColor(color);
 		int x1 = (int) Math.round(a.x - xShift);
 		int y1 = (int) Math.round(yShift - a.y);
 		int x2 = (int) Math.round(b.x - xShift);
 		int y2 = (int) Math.round(yShift - b.y);
+		g.setStroke(stroke);
 		g.drawLine(x1, y1, x2, y2);
+		g.setColor(temp);
 	}
 
 }

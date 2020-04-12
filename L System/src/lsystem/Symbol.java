@@ -3,6 +3,7 @@ package lsystem;
 public class Symbol
 {
 	private String lexeme;
+	public int generation = -1;
 	
 	public Symbol(String lexeme)
 	{

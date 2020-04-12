@@ -10,11 +10,16 @@ public class Grammar
 {
 	public HashMap<Symbol, LinkedList<Action>> actionMap;
 	private HashMap<Symbol, LinkedList<Symbol>> replacementMap;
+	public Dictionary<String> constants;
+	public Dictionary<String> variables;
 	
 	public Grammar(LinkedList<ProductionRule> RuleList, HashMap<Symbol, LinkedList<Action>> actionMap, Dictionary<String> constants, Dictionary<String> variables)
 	{
 		this.actionMap = actionMap;
 		replacementMap = new HashMap<Symbol, LinkedList<Symbol>>();
+		
+		this.constants = constants;
+		this.variables = variables;
 		
 		for(ProductionRule rule : RuleList)
 			if(replacementMap.containsKey(rule.variable))

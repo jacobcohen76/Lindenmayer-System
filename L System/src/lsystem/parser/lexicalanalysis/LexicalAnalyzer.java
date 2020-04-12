@@ -47,4 +47,9 @@ public class LexicalAnalyzer
 				+ " a Token of type '" + t.type + "' with lexeme of '" + t.lexeme + "' at line " + t.line_no;
 		return new Error(message);
 	}
+	
+	public String toString()
+	{
+		return tokenStream.toString();
+	}
 }

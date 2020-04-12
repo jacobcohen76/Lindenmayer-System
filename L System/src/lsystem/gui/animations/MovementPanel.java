@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
@@ -31,12 +32,20 @@ public class MovementPanel extends JPanel
 	private int shiftX;
 	private int shiftY;
 	
-	private ArrayList<LineSegment> lines;
+	private int numLines;
+	private Color finalColor;
 	
-	public MovementPanel(int radius, int length, int shiftX, int shiftY, Color A, Color B, Color C, Color D, Color background, Point origin, Vector direction)
+	private ArrayList<LineSegment> lines;
+	private ArrayList<Color> colors;
+	private ArrayList<Float> thicknesses;
+	
+	public float thickness = 1.0f;
+	
+	public MovementPanel(int radius, int length, int shiftX, int shiftY, Color A, Color B, Color C, Color D, Color background, Point origin, Vector direction, Color finalColor, int numLines, float thickness, LinkedList<LineSegment> lines, boolean depthbasedcolors)
 	{
+		this.depthbasedcolors = depthbasedcolors;
 		this.setOpaque(false);
-		
+		this.thickness = thickness;
 		this.radius = radius;
 		this.length = length;
 		this.shiftX = shiftX;
@@ -50,7 +59,31 @@ public class MovementPanel extends JPanel
 		current = origin;
 		prev = origin.clone();
 		
-		lines = new ArrayList<LineSegment>();
+		this.numLines = numLines;
+		this.finalColor = finalColor == null ? D : finalColor;
+		this.lines = new ArrayList<LineSegment>();
+		colors = new ArrayList<Color>();
+		thicknesses = new ArrayList<Float>();
+		
+		for(LineSegment line : lines)
+		{
+			colors.add(line.color);
+			thicknesses.add(line.thickness);
+		}
+	}
+	
+	private Color getColor(Color origin, Color destination)
+	{
+		double percent = (double) lines.size() / (double) numLines; 
+		int dr = destination.getRed() - origin.getRed();
+		int dg = destination.getGreen() - origin.getGreen();
+		int db = destination.getBlue() - origin.getBlue();
+		int da = destination.getAlpha() - origin.getAlpha();
+		dr *= percent;
+		dg *= percent;
+		db *= percent;
+		da *= percent;
+		return new Color(origin.getRed() + dr, origin.getGreen() + dg, origin.getBlue() + db, origin.getAlpha() + da);
 	}
 	
 	private boolean renderingLine = false;
@@ -62,10 +95,10 @@ public class MovementPanel extends JPanel
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
 		for(LineSegment line : lines)
-			render(line, g, LineSegment.thickness);
+			render(line, g);
 		
 		if(renderingLine)
-			render(g, prev, increment, D, shiftX, shiftY);
+			render(g, prev, increment, depthbasedcolors == true ? getColor() : getColor(D, finalColor), shiftX, shiftY, thickness);
 		render(g, prev, B, shiftX, shiftY, radius);
 		render(g, current, A, shiftX, shiftY, radius);
 		render(g, current, direction, C, shiftX, shiftY, length);
@@ -160,9 +193,24 @@ public class MovementPanel extends JPanel
 		}
 	}
 	
+	int j = 0;
+	private Color getColor()
+	{
+		return colors.get(j);
+	}
+	
+	private float getThickness()
+	{
+		return thicknesses.get(j);
+	}
+	
+	public boolean depthbasedcolors = false;
 	public LineSegment getLine()
 	{
-		return new LineSegment(prev.clone(), current.clone());
+		Color c = depthbasedcolors == true ? getColor() : getColor(D, finalColor);
+		float thickness = getThickness();
+		j++;
+		return new LineSegment(prev.clone(), current.clone(), c, thickness);
 	}
 	
 	private void move(Point prev, Point current, Point destination, int frames, int interval)
@@ -221,7 +269,7 @@ public class MovementPanel extends JPanel
 		g2D.drawLine(x1, y1, x2, y2);
 	}
 	
-	private void render(Graphics g, Point origin, Point destination, Color c, int shiftX, int shiftY)
+	private void render(Graphics g, Point origin, Point destination, Color c, int shiftX, int shiftY, float thickness)
 	{
 		int x1 = (int) Math.round(origin.x - shiftX);
 		int y1 = (int) Math.round(shiftY - origin.y);
@@ -229,7 +277,7 @@ public class MovementPanel extends JPanel
 		int y2 = (int) Math.round(shiftY - destination.y);
 		
 		Graphics2D g2D = (Graphics2D) g;
-		BasicStroke stroke = new BasicStroke(1.0f);
+		BasicStroke stroke = new BasicStroke(thickness);
 		g2D.setStroke(stroke);
 		g2D.setColor(c);
 		g2D.drawLine(x1, y1, x2, y2);
@@ -241,16 +289,8 @@ public class MovementPanel extends JPanel
 		repaint();
 	}
 	
-	private void render(LineSegment line, Graphics g, float thickness)
+	private void render(LineSegment line, Graphics g)
 	{
-		g.setColor(D);
-		int x1 = (int) Math.round(line.a.x - shiftX);
-		int y1 = (int) Math.round(shiftY - line.a.y);
-		int x2 = (int) Math.round(line.b.x - shiftX);
-		int y2 = (int) Math.round(shiftY - line.b.y);
-		Graphics2D g2D = (Graphics2D) g;
-		BasicStroke stroke = new BasicStroke(thickness);
-		g2D.setStroke(stroke);
-		g2D.drawLine(x1, y1, x2, y2);
+		line.render((Graphics2D) g, shiftX, shiftY);
 	}
 }

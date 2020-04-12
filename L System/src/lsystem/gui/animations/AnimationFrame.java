@@ -9,6 +9,8 @@ import javax.swing.JFrame;
 import lsystem.LSystem;
 import lsystem.Symbol;
 import lsystem.actions.Action;
+import lsystem.actions.RotateCCW;
+import lsystem.actions.RotateCW;
 
 public class AnimationFrame extends JFrame
 {
@@ -158,10 +160,10 @@ public class AnimationFrame extends JFrame
 			animationPanel.moveTo(system.current.clone(), getActionSpeed());
 			break;
 		case "lsystem.actions.RotateCCW":
-			animationPanel.rotateTo(((lsystem.actions.RotateCCW)action).radians, system.direction, getActionSpeed());
+			animationPanel.rotateTo(((lsystem.actions.RotateCCW)action).radians * RotateCCW.direction, system.direction, getActionSpeed());
 			break;
 		case "lsystem.actions.RotateCW":
-			animationPanel.rotateTo(((lsystem.actions.RotateCW)action).radians * -1, system.direction, getActionSpeed());
+			animationPanel.rotateTo(((lsystem.actions.RotateCW)action).radians * -1 * RotateCW.direction, system.direction, getActionSpeed());
 			break;
 		case "lsystem.actions.DrawLine":
 			animationPanel.drawLine(getActionSpeed());

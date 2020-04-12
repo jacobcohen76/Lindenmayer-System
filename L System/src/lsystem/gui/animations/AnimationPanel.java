@@ -3,10 +3,12 @@ package lsystem.gui.animations;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.util.LinkedList;
 
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
+import lsystem.cartesian2d.LineSegment;
 import lsystem.cartesian2d.Point;
 import lsystem.cartesian2d.Vector;
 
@@ -26,7 +28,7 @@ public class AnimationPanel extends JPanel
 	
 	private MovementPanel movementPanel;
 	
-	public AnimationPanel(Point origin, Vector direction, Color foreground, Color background, int width, int height, int shiftX, int shiftY)
+	public AnimationPanel(Point origin, Vector direction, Color foreground, Color background, int width, int height, int shiftX, int shiftY, Color finalColor, int numLines, float thickness, LinkedList<LineSegment> lines, boolean depthbasedcolors)
 	{
 		layout = new BorderLayout();
 		this.setLayout(layout);
@@ -37,7 +39,7 @@ public class AnimationPanel extends JPanel
 		layers.setPreferredSize(size);
 		layers.setLayout(new BorderLayout());
 		
-		movementPanel = new MovementPanel(RADIUS, LENGTH, shiftX, shiftY, POINTA, POINTB, VECTOR, foreground, background, origin, direction);
+		movementPanel = new MovementPanel(RADIUS, LENGTH, shiftX, shiftY, POINTA, POINTB, VECTOR, foreground, background, origin, direction, finalColor, numLines, thickness, lines, depthbasedcolors);
 		movementPanel.setPreferredSize(size);
 		
 		layers.add(movementPanel, BorderLayout.CENTER, 0);

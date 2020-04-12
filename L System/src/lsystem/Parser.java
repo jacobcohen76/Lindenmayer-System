@@ -6,6 +6,7 @@ import lsystem.actions.Action;
 import lsystem.actions.DecrementAngle;
 import lsystem.actions.DrawLine;
 import lsystem.actions.IncrementAngle;
+import lsystem.actions.IncrementThickness;
 import lsystem.actions.MoveForward;
 import lsystem.actions.PopDirection;
 import lsystem.actions.PopPosition;
@@ -14,6 +15,7 @@ import lsystem.actions.PushPosition;
 import lsystem.actions.RotateCCW;
 import lsystem.actions.RotateCW;
 import lsystem.actions.ScaleLine;
+import lsystem.actions.ScaleThickness;
 import lsystem.actions.SwapAngles;
 import lsystem.cartesian2d.Point;
 import lsystem.cartesian2d.Vector;
@@ -41,6 +43,8 @@ public class Parser
 		KEYWORDS.add("DECANGLE");
 		KEYWORDS.add("SCALE");
 		KEYWORDS.add("SWAP");
+		KEYWORDS.add("INCTHICKNESS");
+		KEYWORDS.add("SCLTHICK");
 	}
 	
 	private LexicalAnalyzer lexer;
@@ -228,6 +232,10 @@ public class Parser
 			return new PushDirection();
 		case "PUSHPOS":
 			return new PushPosition();
+		case "INCTHICKNESS":
+			return new IncrementThickness((float) parseNum());
+		case "SCLTHICK":
+			return new ScaleThickness((float) parseNum());
 		}
 		throw new Error("Error, invalid action keyword at '" + t.lexeme + "', expected a valid action keyword.");
 	}

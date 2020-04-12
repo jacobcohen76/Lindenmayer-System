@@ -28,7 +28,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import lsystem.LSystem;
 import lsystem.Parser;
-import lsystem.cartesian2d.LineSegment;
 import lsystem.cartesian2d.Point;
 import lsystem.cartesian2d.Vector;
 
@@ -63,7 +62,9 @@ public class GUI extends javax.swing.JFrame {
    
    private JRadioButtonMenuItem degreeMode;
    private JRadioButtonMenuItem radianMode;
-
+   private JRadioButtonMenuItem depthBasedColorsOption;
+   private JRadioButtonMenuItem percentageBasedLines;
+   private JRadioButtonMenuItem smallestGenerationsFirst;
    /**
     * This method is called from within the constructor to initialize the form.
     * WARNING: Do NOT modify this code. The content of this method is always
@@ -350,13 +351,22 @@ public class GUI extends javax.swing.JFrame {
 
        colorsMenu.setText("Colors");
 
-       forgeroundMenuItem.setText("Foreground");
+       forgeroundMenuItem.setText("Initial Color");
        forgeroundMenuItem.addActionListener(new java.awt.event.ActionListener() {
            public void actionPerformed(java.awt.event.ActionEvent evt) {
                forgeroundMenuItemActionPerformed(evt);
            }
        });
        colorsMenu.add(forgeroundMenuItem);
+       
+       JMenuItem finalColorMenuItem = new JMenuItem();
+       finalColorMenuItem.setText("Destination Color");
+       finalColorMenuItem.addActionListener(new java.awt.event.ActionListener() {
+    	   public void actionPerformed(java.awt.event.ActionEvent evt) {
+    		   destinationMenuItemActionPerformed(evt);
+    	   }
+       });
+       colorsMenu.add(finalColorMenuItem);
 
        backgroundMenuItem.setText("Background");
        backgroundMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -365,7 +375,7 @@ public class GUI extends javax.swing.JFrame {
            }
        });
        colorsMenu.add(backgroundMenuItem);
-
+       
        mainMenu.add(colorsMenu);
        
        JMenu angleMode = new JMenu("Angle Type");
@@ -388,6 +398,35 @@ public class GUI extends javax.swing.JFrame {
     		   degreeModeActionPerformed(evt);
     	   }
        });
+       
+       JMenu renderingOptions = new JMenu("Rendering Options");
+       
+       smallestGenerationsFirst = new JRadioButtonMenuItem("Smallest Generations on Bottom", false);
+       smallestGenerationsFirst.addActionListener(new java.awt.event.ActionListener() {
+    	   public void actionPerformed(java.awt.event.ActionEvent evt) {
+    		   smallestGenerationsActionPerformed(evt);
+    	   }
+       });
+       
+       renderingOptions.add(smallestGenerationsFirst);
+       
+       depthBasedColorsOption = new JRadioButtonMenuItem("Depth Based Colors");
+       renderingOptions.add(depthBasedColorsOption);
+       depthBasedColorsOption.addActionListener(new java.awt.event.ActionListener() {
+    	   public void actionPerformed(java.awt.event.ActionEvent evt) {
+    		   depthBasedColorsActionPerformed(evt);
+    	   }
+       });
+       
+       percentageBasedLines = new JRadioButtonMenuItem("Rounded Line Percentages");
+       percentageBasedLines.addActionListener(new java.awt.event.ActionListener() {
+    	   public void actionPerformed(java.awt.event.ActionEvent evt) {
+    		   percentageBasedLinesActonPerformed(evt);
+    	   }
+       });
+       renderingOptions.add(percentageBasedLines);
+       
+       mainMenu.add(renderingOptions);
 
        setJMenuBar(mainMenu);
 
@@ -495,13 +534,24 @@ public class GUI extends javax.swing.JFrame {
 
     private Color foregroundColor = Color.GREEN;
     private void forgeroundMenuItemActionPerformed(java.awt.event.ActionEvent evt) {                                                   
-    	foregroundColor = JColorChooser.showDialog(this,  "Select a foreground color.", foregroundColor);
+    	Color selected = JColorChooser.showDialog(this,  "Select a foreground color.", foregroundColor);
+    	if(selected != null)
+    		foregroundColor = selected;
     }
     
     private Color backgroundColor = Color.BLACK;
     private void backgroundMenuItemActionPerformed(java.awt.event.ActionEvent evt) {                                                   
-    	backgroundColor = JColorChooser.showDialog(this,  "Select a background color.", backgroundColor);
-    } 
+    	Color selected = JColorChooser.showDialog(this,  "Select a background color.", backgroundColor);
+    	if(selected != null)
+    		backgroundColor = selected;
+    }
+    
+    private Color destinationColor = null;
+    private void destinationMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+    	Color selected = JColorChooser.showDialog(this,  "Select a background color.", destinationColor == null ? foregroundColor : destinationColor);
+    	if(selected != null)
+    		destinationColor = selected;
+    }
     
     private void display(String statusMessage, Color color)
     {
@@ -569,8 +619,13 @@ public class GUI extends javax.swing.JFrame {
     	{
     		try {
     			system.reset();
+        		system.smallestGensFirst = smallestGenerationsFirst.isSelected();
+        		system.depthbasedcolors = depthBasedColorsOption.isSelected();
+        		system.roundedPercentages = percentageBasedLines.isSelected();
+    			system.setFinalColor(destinationColor);
     			system.setN(getNumGenerations());
-    			LineSegment.thickness = getThickness();
+    			system.startingColor = new Color(foregroundColor.getRed(), foregroundColor.getGreen(), foregroundColor.getBlue(), foregroundColor.getAlpha());
+    			system.thickness = getThickness();
     			system.origin = new Point(0, 0);
     			system.initial = getVectorFromInput().normalize();
     			display("Generating Replacement String...", Color.BLACK);
@@ -594,7 +649,25 @@ public class GUI extends javax.swing.JFrame {
     }                                                                                            
 
     private void fileMenuActionPerformed(java.awt.event.ActionEvent evt) {                                         
-    }                                        
+    }
+    
+    public void smallestGenerationsActionPerformed(java.awt.event.ActionEvent evt)
+    {
+    	if(system != null)
+    		system.smallestGensFirst = this.smallestGenerationsFirst.isSelected();
+    }
+    
+    public void depthBasedColorsActionPerformed(java.awt.event.ActionEvent evt)
+    {
+    	if(system != null)
+    		system.depthbasedcolors = this.depthBasedColorsOption.isSelected();
+    }
+    
+    public void percentageBasedLinesActonPerformed(java.awt.event.ActionEvent evt)
+    {
+    	if(system != null)
+    		system.roundedPercentages = this.percentageBasedLines.isSelected();
+    }
     
     private void resetInputFields()
     {
@@ -626,12 +699,12 @@ public class GUI extends javax.swing.JFrame {
     	catch(Exception ex)
     	{
     		scan.close();
-    		throw new Error("Error, expected a non-zero positive integer in the input field labeled 'Number of Generations, n ='.");
+    		throw new Error("Error, expected zero or a positive integer in the input field labeled 'Number of Generations, n ='.");
     	}
     	scan.close();
-    	if(numGenerations < 1)
+    	if(numGenerations < 0)
     	{
-    		throw new Error("Error, expected a non-zero positive integer in the input field labeled 'Number of Generations, n ='.");
+    		throw new Error("Error, expected zero or a positive integer in the input field labeled 'Number of Generations, n ='.");
     	}
     	return numGenerations;
     }
@@ -653,6 +726,11 @@ public class GUI extends javax.swing.JFrame {
     		
     		Parser parser = new Parser(rulesInput, constantsInput, variablesInput, axiomInput);
     		system = parser.parseLSystem(getNumGenerations(), origin.clone(), getVectorFromInput());
+    		
+    		system.smallestGensFirst = this.smallestGenerationsFirst.isSelected();
+    		system.depthbasedcolors = this.depthBasedColorsOption.isSelected();
+    		system.roundedPercentages = this.percentageBasedLines.isSelected();
+
     		display("Success, your LSystem has been created, now generate an image by going to File -> Save As, and then saving your image to your desired location.", SUCCESS);
     		animateButton.setEnabled(true);
        	}
@@ -683,11 +761,16 @@ public class GUI extends javax.swing.JFrame {
     	{
     		try
     		{
-	        	LineSegment.thickness = getThickness();
+        		system.smallestGensFirst = smallestGenerationsFirst.isSelected();
+        		system.depthbasedcolors = depthBasedColorsOption.isSelected();
+        		system.roundedPercentages = percentageBasedLines.isSelected();
+	        	system.thickness = getThickness();
 	        	system.setN(getNumGenerations());
+    			system.startingColor = new Color(foregroundColor.getRed(), foregroundColor.getGreen(), foregroundColor.getBlue(), foregroundColor.getAlpha());
+    			system.setFinalColor(destinationColor);
 	        	buildButton.setEnabled(false);
 	        	animateButton.setEnabled(false);
-	    		system.animate(foregroundColor, backgroundColor, animationClosureEvent);
+	    		system.animate(new Color(foregroundColor.getRed(), foregroundColor.getGreen(), foregroundColor.getBlue(), foregroundColor.getAlpha()), backgroundColor, animationClosureEvent);
 	    		buildButton.setEnabled(true);
 	        	animateButton.setEnabled(true);
     		}
@@ -861,6 +944,7 @@ public class GUI extends javax.swing.JFrame {
 			load(preset);
 			ois.close();
 			display("Program state successfully loaded from " + selected, SUCCESS);
+			mostRecentDirectory = selected;
 		} catch (Exception e)
 		{
 			display("An unexpected error occured when trying to load the program state from " + selected, FAILURE);
