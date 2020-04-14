@@ -1,6 +1,9 @@
 package lsystem.scripting;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -13,34 +16,37 @@ import lsystem.Parser;
 import lsystem.cartesian2d.Point;
 import lsystem.cartesian2d.Vector;
 
-public class MAIN
+public class PythagoreanTree
 {
-	static int n = 20;
-	static float thickness = 8.0f;
+	static int n = 15;
+	static float thickness = 6f;
 	static Vector initial = new Vector(1.0, 0.0);
 	static Point origin = new Point(0.0, 0.0);
 	
-	static Color startingColor = new Color(0x000000);
-//	static Color finalColor = new Color(0x725faf);
-	static Color finalColor = new Color(0xFFFFFF);
-	static Color background = new Color(0xD3DAF2);
+	static Color startingColor = new Color(0x9059ff);
+	static Color finalColor = new Color(0xffca59);
+	static Color background = new Color(0, 0, 0, 0);
 	
-	static int imagewidth = 8000;
-	static int imageheight = 8000;
+	static Color text = Color.BLACK;
 	
-	static int padX = 500;
-	static int padY = 500;
+	static int imagewidth = 3700;
+	static int imageheight = 3700;
 	
-	static String directory= "E:\\L-Systems\\";
+	static int padX = 150;
+	static int padY = 150;
+	
+	static String directory= "E:\\L-Systems\\frames\\";
 	static boolean degreemode = true;
 	
 	public static void main(String args[])
 	{
-		double width = 200.0;
-		double height = 800.0;
-		double inc_amount = 0.1;
-		for(double A = 60; A <= (90.0 - inc_amount); A += inc_amount)
+		double width = 120.0;
+		double height = 194.0;
+		double inc_amount = 0.5;
+		pythagorean_tree(0.001, 90-0.001, width, height);
+		for(double A = inc_amount; A < 90.0; A += inc_amount)
 			pythagorean_tree(A, 90.0 - A, width, height);
+		pythagorean_tree(90-0.001, 0.001, width, height);
 	}
 	
 	public static void pythagorean_tree(double A, double B, double width, double height)
@@ -50,8 +56,8 @@ public class MAIN
 				"+ (RCCW 90), - (RCW 90),\r\n" + 
 				"a (RCCW ANGLE_A), b (RCW ANGLE_B),\r\n" + 
 				"[ (PUSHPOS, PUSHDIR), ] (POPPOS, POPDIR),\r\n" + 
-				">A (SCALE DOWNSCALE_A), A< (SCALE UPSCALE_A),\r\n" + 
-				">B (SCALE DOWNSCALE_B), B< (SCALE UPSCALE_B)";
+				">A (SCALE DOWNSCALE_A, SCLTHICK THICKDOWNA), A< (SCALE UPSCALE_A, SCLTHICK THICKUPA),\r\n" + 
+				">B (SCALE DOWNSCALE_B, SCLTHICK THICKDOWNB), B< (SCALE UPSCALE_B, SCLTHICK THICKUPB)";
 		
 		constants = constants.replace("WIDTH", String.valueOf(width));
 		constants = constants.replace("HEIGHT", String.valueOf(height));
@@ -60,6 +66,12 @@ public class MAIN
 		
 		A *= Math.PI / 180;
 		B *= Math.PI / 180;
+		
+		double scalefactor = 0.95;
+		constants = constants.replace("THICKDOWNA", new BigDecimal(scalefactor).toPlainString());
+		constants = constants.replace("THICKDOWNB", new BigDecimal(scalefactor).toPlainString());
+		constants = constants.replace("THICKUPA", new BigDecimal(1.0 / scalefactor).toPlainString());
+		constants = constants.replace("THICKUPB", new BigDecimal(1.0 / scalefactor).toPlainString());
 		
 		constants = constants.replace("DOWNSCALE_A", new BigDecimal(Math.sin(B)).toPlainString());
 		constants = constants.replace("DOWNSCALE_B", new BigDecimal(Math.sin(A)).toPlainString());
@@ -75,17 +87,29 @@ public class MAIN
 		Parser parser = new Parser(rules, constants, variables, axiom);
 		Parser.DEGREEMODE = degreemode;
 		LSystem system = parser.parseLSystem(n, origin, initial);
+		system.biggestGensFirst = true;
+		system.smallestGensFirst = false;
 		system.thickness = thickness;
 		system.startingColor = startingColor;
 		system.setFinalColor(finalColor);
 		system.generate(n);
 		BufferedImage image = system.getImage(thickness, startingColor, background, imagewidth, imageheight, padX, padY);
+		Graphics2D g2D = image.createGraphics();
+		g2D.setColor(text);
+		g2D.setFont(new Font("Dialog", Font.BOLD, 150));
 		
 		A *= 180 / Math.PI;
 		B *= 180 / Math.PI;
 		
+        FontMetrics fm = g2D.getFontMetrics();
+        String title = "Pythagorean Tree, n = " + n;
+        String angles = "A = " + String.format("%.1f", A)  + "° " + "B = " + String.format("%.1f", B) + "°";
+        int y = fm.getHeight();
+        int x = (fm.stringWidth(title) - fm.stringWidth(angles)) / 2;
+		g2D.drawString(title, 0, y);
+		g2D.drawString(angles, x, 2 * y);
 		try {
-			ImageIO.write(image, "png", new File(directory + "PythagoreanTree, A = " + String.format("%.2f", A) + ", B = " + String.format("%.2f", B) + ", n = " + n + ".png"));
+			ImageIO.write(image, "png", new File(directory + "PythagoreanTree - A = " + String.format("%.2f", A) + " B = " + String.format("%.2f", B) + " n = " + n + ".png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
