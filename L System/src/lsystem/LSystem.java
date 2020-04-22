@@ -14,6 +14,7 @@ import lsystem.actions.RotateCCW;
 import lsystem.actions.RotateCW;
 import lsystem.cartesian2d.LineSegment;
 import lsystem.cartesian2d.Point;
+import lsystem.cartesian2d.Polygon;
 import lsystem.cartesian2d.Vector;
 import lsystem.gui.animations.AnimationFrame;
 import lsystem.gui.animations.AnimationPanel;
@@ -35,6 +36,8 @@ public class LSystem
 	public Vector direction;
 	
 	private LinkedList<LineSegment> lines;
+	private LinkedList<Polygon> closedPolygons;
+	private Stack<Polygon> openPolygonStack;
 	
 	public LSystem(Grammar grammar, LinkedList<Symbol> axiom, int n, Point origin, Vector initial)
 	{
@@ -44,6 +47,8 @@ public class LSystem
 		
 		positionStack = new Stack<Point>();
 		directionStack = new Stack<Vector>();
+		openPolygonStack = new Stack<Polygon>();
+		closedPolygons = new LinkedList<Polygon>();
 		
 		prev = null;
 		
@@ -56,8 +61,27 @@ public class LSystem
 		lines = new LinkedList<LineSegment>();
 	}
 	
+	public void openPolygon()
+	{
+		openPolygonStack.add(new Polygon());
+		openPolygonStack.peek().n = lineGeneratorNumber;
+		openPolygonStack.peek().color = new Color(currentLineColor.getRed(), currentLineColor.getGreen(), currentLineColor.getBlue(), currentLineColor.getAlpha());
+	}
+	
+	public void addPoint()
+	{
+		if(openPolygonStack.isEmpty() == false)
+			openPolygonStack.peek().addPoint(current.clone());
+	}
+	
+	public void closePolygon()
+	{
+		closedPolygons.add(openPolygonStack.pop());
+	}
+	
 	public void generate()
 	{
+		currentLineColor = startingColor;
 		if(finalColor == null)
 			finalColor = new Color(startingColor.getRed(), startingColor.getGreen(), startingColor.getBlue(), startingColor.getAlpha());
 		perform(getReplacement());
@@ -128,6 +152,7 @@ public class LSystem
 	public void animate(Color foreground, Color background, WindowListener closureEvent)
 	{
 		reset();
+		currentLineColor = startingColor;
 		if(finalColor == null)
 			finalColor = new Color(startingColor.getRed(), startingColor.getGreen(), startingColor.getBlue(), startingColor.getAlpha());
 		
@@ -265,7 +290,12 @@ public class LSystem
 	
 	public void drawLine()
 	{
-		lines.add(new LineSegment(prev, current, new Color(currentLineColor.getRed(), currentLineColor.getGreen(), currentLineColor.getBlue(), currentLineColor.getAlpha()), thickness, lineGeneratorNumber));
+		lines.add(getLine());
+	}
+	
+	private LineSegment getLine()
+	{
+		return new LineSegment(prev, current, new Color(currentLineColor.getRed(), currentLineColor.getGreen(), currentLineColor.getBlue(), currentLineColor.getAlpha()), thickness, lineGeneratorNumber);
 	}
 	
 	private double min(double a, double b)
@@ -299,6 +329,11 @@ public class LSystem
 			max = max(max, line.a.x, line.b.x);
 			mostThick = Float.max(mostThick, line.thickness);
 		}
+		for(Polygon poly : closedPolygons)
+		{
+			min = Double.min(min, poly.minX());
+			max = Double.max(max, poly.maxX());
+		}
 		return (int) (Math.round(max - min) + 2 * mostThick);
 	}
 	
@@ -313,6 +348,11 @@ public class LSystem
 			max = max(max, line.a.y, line.b.y);
 			mostThick = Float.max(mostThick, line.thickness);
 		}
+		for(Polygon poly : closedPolygons)
+		{
+			min = Double.min(min, poly.minY());
+			max = Double.max(max, poly.maxY());
+		}
 		return (int) (Math.round(max - min) + 2 * mostThick);
 	}
 	
@@ -324,7 +364,9 @@ public class LSystem
 		{
 			min = min(min, line.a.x, line.b.x);
 			mostThick = Float.max(mostThick, line.thickness);
-		}	
+		}
+		for(Polygon poly : closedPolygons)
+			min = Double.min(min, poly.minX());
 		return (int) Math.ceil(min - mostThick);
 	}
 	
@@ -337,16 +379,33 @@ public class LSystem
 			max = max(max, line.a.y, line.b.y);
 			mostThick = Float.max(mostThick, line.thickness);
 		}
+		for(Polygon poly : closedPolygons)
+			max = Double.max(max, poly.maxY());
 		return (int) Math.ceil(max + mostThick);
 	}
 	
+	
+	public int lastXShift = -1;
+	public int lastYShift = -1;
 	private void render(BufferedImage image, int xShift, int yShift, float thickness, Color foreground, Color background)
 	{
+		lastXShift = xShift;
+		lastYShift = yShift;
+		
 		Graphics2D g = image.createGraphics();
 		g.setColor(background);
 		g.fillRect(0, 0, image.getWidth(), image.getHeight());
 		if(depthbasedcolors == false)
 		{
+			Iterator<Polygon> pitr = closedPolygons.iterator();
+			if(finalColor != null)
+			{
+				finalColor = finalColor == null ? startingColor : finalColor;
+				for(int i = 0; pitr.hasNext(); i++)
+					pitr.next().color = getColor(startingColor, finalColor, i, closedPolygons.size() - 1);
+	
+			}
+			
 			Iterator<LineSegment> itr = lines.iterator();
 			if(finalColor != null)
 			{
@@ -360,6 +419,17 @@ public class LSystem
 		{
 			for(int i = n - 1; i >= 0; i--)
 			{
+				Iterator<Polygon> pitr = closedPolygons.descendingIterator();
+				while(pitr.hasNext())
+				{
+					Polygon p = pitr.next();
+					if(p.n == i)
+					{
+						p.render(g, xShift, yShift);
+						pitr.remove();
+					}
+				}
+				
 				Iterator<LineSegment> itr = lines.iterator();
 				while(itr.hasNext())
 				{
@@ -374,9 +444,19 @@ public class LSystem
 		}
 		else if(biggestGensFirst == true)
 		{
-			System.out.println("biggest first");
 			for(int i = 0; i <= n; i++)
 			{
+				Iterator<Polygon> pitr = closedPolygons.descendingIterator();
+				while(pitr.hasNext())
+				{
+					Polygon p = pitr.next();
+					if(p.n == i)
+					{
+						p.render(g, xShift, yShift);
+						pitr.remove();
+					}
+				}
+				
 				Iterator<LineSegment> itr = lines.iterator();
 				while(itr.hasNext())
 				{
@@ -390,10 +470,13 @@ public class LSystem
 			}
 		}
 		else
+		{
+			for(Polygon poly : closedPolygons)
+				poly.render(g, xShift, yShift);
 			for(LineSegment line : lines)
 				line.render(g, xShift, yShift);
+		}
 	}
-	
 	
 	public boolean biggestGensFirst = true;
 	public int padY = 4;
@@ -407,12 +490,19 @@ public class LSystem
 		return image;
 	}
 	
-	public BufferedImage getImage(float thicknesss, Color foreground, Color background, int width, int height, int padX, int padY)
+	public BufferedImage getImage(int width, int height, int xShift, int yShift, Color background)
+	{
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		render(image, xShift, yShift, 1.0f, startingColor, background);
+		return image;
+	}
+	
+	public BufferedImage getImage(Color foreground, Color background, int width, int height, int padX, int padY)
 	{
 		this.padX = padX;
 		this.padY = padY;
 		BufferedImage image = new BufferedImage(width + padX * 2, height + padY * 2, BufferedImage.TYPE_INT_ARGB);
-		render(image, -(width + 2 * padX) / 2, height - padY, thickness, foreground, background);
+		render(image, -(width + 2 * padX) / 2, height - padY, thickness, startingColor, background);
 		reset();
 		return image;
 	}
@@ -432,6 +522,7 @@ public class LSystem
 	
 	public boolean smallestGensFirst = true;
 	public boolean roundedPercentages = false;
+	int roundN = 0;
 	
 	private Color getColor(Color origin, Color destination, int i, int m)
 	{
@@ -440,7 +531,7 @@ public class LSystem
 		return getColor(origin, destination, (double) i / (double) m);
 	}
 	
-	private Color finalColor = null;
+	public Color finalColor = null;
 	
 	public void setFinalColor(Color color)
 	{
@@ -456,6 +547,8 @@ public class LSystem
 		direction = initial.clone();
 		positionStack.clear();
 		directionStack.clear();
+		openPolygonStack.clear();
+		closedPolygons.clear();
 		
 		RotateCCW.direction = 1.0;
 		RotateCW.direction = 1.0;

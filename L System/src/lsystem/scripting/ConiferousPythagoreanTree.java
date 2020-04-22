@@ -29,32 +29,42 @@ public class ConiferousPythagoreanTree
 	
 	static Color text = Color.BLACK;
 	
-	static int imagewidth = 3700;
-	static int imageheight = 3700;
+	static int imagewidth = 1400;
+	static int imageheight = 1400;
 	
-	static int padX = 150;
-	static int padY = 150;
+	static int padX = 75;
+	static int padY = 75;
 	
-	static String directory= "E:\\L-Systems\\frames\\";
+	static String directory= "E:\\L-Systems\\Coniferous Pythagorean Tree\\frames\\";
 	static boolean degreemode = true;
 	
 	public static void main(String args[])
 	{
-		double width = 120.0;
-		double height = 194.0;
+		double width = 36;
+		double height = 60;
 		double inc_amount = 0.5;
 		pythagorean_tree(0.001, 90-0.001, width, height);
 		for(double A = inc_amount; A < 90.0; A += inc_amount)
 			pythagorean_tree(A, 90.0 - A, width, height);
-		pythagorean_tree(90-0.001, 0.001, width, height);
+	}
+	
+	public static void run()
+	{
+		double width = 45.0;
+		double height = 74.0;
+		double inc_amount = 0.5;
+		pythagorean_tree(0.001, 90-0.001, width, height);
+		for(double A = inc_amount; A < 90.0; A += inc_amount)
+			pythagorean_tree(A, 90.0 - A, width, height);
 	}
 	
 	public static void pythagorean_tree(double A, double B, double width, double height)
 	{
+		origin = new Point(0.0 - width / 2.0, 0.0);
 		String constants =
 				"F (MVFWD WIDTH, DRAWLINE), H (MVFWD HEIGHT, DRAWLINE),\r\n" + 
 						"+90 (RCCW 90), -90 (RCW 90),\r\n" + 
-						"+a (RCCW ANGLE_A), +b (RCCW ANGLE_B),\r\n" +
+						"+a (RCCW ANGLE_A), +b (RCCW ANGLE_B),\r\n" + 
 						"-a (RCW ANGLE_A), -b (RCW ANGLE_B),\r\n" + 
 						"[ (PUSHPOS, PUSHDIR), ] (POPPOS, POPDIR),\r\n" + 
 						"> (SCALE DOWNSCALE_A, SCLTHICK THICKDOWNA), < (SCALE UPSCALE_A, SCLTHICK THICKUPA),\r\n" + 
@@ -79,17 +89,13 @@ public class ConiferousPythagoreanTree
 		constants = constants.replace("UPSCALE_A", new BigDecimal(1.0 / Math.sin(B)).toPlainString());
 		constants = constants.replace("UPSCALE_B", new BigDecimal(1.0 / Math.sin(A)).toPlainString());
 		
-		String variables = "X1, X2, Y1, Y2, U1, U2, S1, S2;";
-		String axiom = "X1";
+		String variables = "X, Y, U, V";
+		String axiom = "X";
 		String rules = 
-				"X1 = +90 H -90 [ +a > X2 < ] F [ +90 +90 -b } Y2 { ] -90 H -90 F;\r\n" + 
-				"X2 = +90 H -90 [ +a > U1 < ] F [ +90 +90 -b } S1 { ] -90 H -90 F;\r\n" + 
-				"Y1 = F -90 H -90 [ +a > X2 < ] F [ +90 +90 -b } Y2 { ] -90 H;\r\n" + 
-				"Y2 = F -90 H -90 [ +a > U1 < ] F [ +90 +90 -b } S1 { ] -90 H;\r\n" + 
-				"U1 = +90 H -90 [ +b } U2 { ] F [ +90 +90 -a > S2 < ] -90 H -90 F;\r\n" + 
-				"U2 = +90 H -90 [ +b } X1 { ] F [ +90 +90 -a > Y1 < ] -90 H -90 F;\r\n" + 
-				"S1 = F -90 H -90 [ +b } U2 { ] F [ +90 +90 -a > S2 < ] -90 H;\r\n" + 
-				"S2 = F -90 H -90 [ +b } X1 { ] F [ +90 +90 -a > Y1 < ] -90 H;";
+				"X = +90 H -90 [ +a > U < ] F [ +90 +90 -b } V { ] -90 H -90 F;\r\n" + 
+				"Y = F -90 H -90 [ +a > U < ] F [ +90 +90 -b } V { ] -90 H;\r\n" + 
+				"U = +90 H -90 [ +b } X { ] F [ +90 +90 -a > Y < ] -90 H -90 F;\r\n" + 
+				"V = F -90 H -90 [ +b } X { ] F [ +90 +90 -a > Y < ] -90 H;";
 		
 		Parser parser = new Parser(rules, constants, variables, axiom);
 		Parser.DEGREEMODE = degreemode;
@@ -102,21 +108,26 @@ public class ConiferousPythagoreanTree
 		system.startingColor = startingColor;
 		system.setFinalColor(finalColor);
 		system.generate(n);
-		BufferedImage image = system.getImage(thickness, startingColor, background, imagewidth, imageheight, padX, padY);
+		BufferedImage image = system.getImage(startingColor, background, imagewidth, imageheight, padX, padY);
 		Graphics2D g2D = image.createGraphics();
 		g2D.setColor(text);
-		g2D.setFont(new Font("Dialog", Font.BOLD, 150));
+		g2D.setFont(new Font("Dialog", Font.BOLD, 40));
 		A *= 180 / Math.PI;
 		B *= 180 / Math.PI;
-        FontMetrics fm = g2D.getFontMetrics();
-        String title = "Pythagorean Tree, n = " + n;
-        String angles = "A = " + String.format("%.1f", A)  + "° " + "B = " + String.format("%.1f", B) + "°";
-        int y = fm.getHeight();
-        int x = (fm.stringWidth(title) - fm.stringWidth(angles)) / 2;
-		g2D.drawString(title, 0, y);
-		g2D.drawString(angles, x, 2 * y);
+		 FontMetrics fm = g2D.getFontMetrics();
+	        String title = "Coniferous Pythagorean Tree";
+	        String angles = "n = " + n + " " + "A = " + String.format("%.1f", A)  + "° " + "B = " + String.format("%.1f", B) + "°";
+	        int y = fm.getHeight();
+	        
+    		g2D.drawString(title, 30, y);
+    		g2D.drawString(angles, 30, 2 * y);
+
+		
+        
 		try {
-			ImageIO.write(image, "png", new File(directory + "Coniferous Pythagorean Tree - A = " + String.format("%.2f", A) + " B = " + String.format("%.2f", B) + " n = " + n + ".png"));
+			File f =  new File(directory + "Coniferous Pythagorean Tree - A = " + String.format("%.1f", A) + " B = " + String.format("%.1f", B) + " n = " + n + ".png");
+			f.mkdirs();
+			ImageIO.write(image, "png",f);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

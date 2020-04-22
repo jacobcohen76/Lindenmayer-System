@@ -29,19 +29,19 @@ public class PythagoreanTree
 	
 	static Color text = Color.BLACK;
 	
-	static int imagewidth = 3700;
-	static int imageheight = 3700;
+	static int imagewidth = 1400;
+	static int imageheight = 1400;
 	
-	static int padX = 150;
-	static int padY = 150;
+	static int padX = 75;
+	static int padY = 75;
 	
-	static String directory= "E:\\L-Systems\\frames\\";
+	static String directory= "E:\\L-Systems\\Pythagorean Tree\\frames\\";
 	static boolean degreemode = true;
 	
 	public static void main(String args[])
 	{
-		double width = 120.0;
-		double height = 194.0;
+		double width = 36;
+		double height = 60;
 		double inc_amount = 0.5;
 		pythagorean_tree(0.001, 90-0.001, width, height);
 		for(double A = inc_amount; A < 90.0; A += inc_amount)
@@ -49,8 +49,19 @@ public class PythagoreanTree
 		pythagorean_tree(90-0.001, 0.001, width, height);
 	}
 	
+	public static void run()
+	{
+		double width = 45.0;
+		double height = 74.0;
+		double inc_amount = 0.5;
+		pythagorean_tree(0.001, 90-0.001, width, height);
+		for(double A = inc_amount; A < 90.0; A += inc_amount)
+			pythagorean_tree(A, 90.0 - A, width, height);
+	}
+	
 	public static void pythagorean_tree(double A, double B, double width, double height)
 	{
+		origin = new Point(0.0 - width / 2.0, 0.0);
 		String constants =
 				"F (MVFWD WIDTH, DRAWLINE), G (MVFWD HEIGHT, DRAWLINE),\r\n" + 
 				"+ (RCCW 90), - (RCW 90),\r\n" + 
@@ -58,6 +69,7 @@ public class PythagoreanTree
 				"[ (PUSHPOS, PUSHDIR), ] (POPPOS, POPDIR),\r\n" + 
 				">A (SCALE DOWNSCALE_A, SCLTHICK THICKDOWNA), A< (SCALE UPSCALE_A, SCLTHICK THICKUPA),\r\n" + 
 				">B (SCALE DOWNSCALE_B, SCLTHICK THICKDOWNB), B< (SCALE UPSCALE_B, SCLTHICK THICKUPB)";
+				//"O (OPENPOLY), C (CLOSEPOLY)";
 		
 		constants = constants.replace("WIDTH", String.valueOf(width));
 		constants = constants.replace("HEIGHT", String.valueOf(height));
@@ -93,23 +105,25 @@ public class PythagoreanTree
 		system.startingColor = startingColor;
 		system.setFinalColor(finalColor);
 		system.generate(n);
-		BufferedImage image = system.getImage(thickness, startingColor, background, imagewidth, imageheight, padX, padY);
+		BufferedImage image = system.getImage(startingColor, background, imagewidth, imageheight, padX, padY);
 		Graphics2D g2D = image.createGraphics();
 		g2D.setColor(text);
-		g2D.setFont(new Font("Dialog", Font.BOLD, 150));
+		g2D.setFont(new Font("Dialog", Font.BOLD, 40));
 		
 		A *= 180 / Math.PI;
 		B *= 180 / Math.PI;
 		
-        FontMetrics fm = g2D.getFontMetrics();
-        String title = "Pythagorean Tree, n = " + n;
-        String angles = "A = " + String.format("%.1f", A)  + "° " + "B = " + String.format("%.1f", B) + "°";
-        int y = fm.getHeight();
-        int x = (fm.stringWidth(title) - fm.stringWidth(angles)) / 2;
-		g2D.drawString(title, 0, y);
-		g2D.drawString(angles, x, 2 * y);
+		 FontMetrics fm = g2D.getFontMetrics();
+	        String title = "Pythagorean Tree";
+	        String angles = "n = " + n + " " + "A = " + String.format("%.1f", A)  + "° " + "B = " + String.format("%.1f", B) + "°";
+	        int y = fm.getHeight();
+	        
+ 		g2D.drawString(title, 30, y);
+ 		g2D.drawString(angles, 30, 2 * y);
 		try {
-			ImageIO.write(image, "png", new File(directory + "PythagoreanTree - A = " + String.format("%.2f", A) + " B = " + String.format("%.2f", B) + " n = " + n + ".png"));
+			File f =  new File(directory + "PythagoreanTree - A = " + String.format("%.1f", A) + " B = " + String.format("%.1f", B) + " n = " + n + ".png");
+			f.mkdirs();
+			ImageIO.write(image, "png",f);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

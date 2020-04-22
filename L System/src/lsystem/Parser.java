@@ -3,11 +3,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import lsystem.actions.Action;
+import lsystem.actions.AddPoint;
+import lsystem.actions.ClosePolygon;
 import lsystem.actions.DecrementAngle;
 import lsystem.actions.DrawLine;
 import lsystem.actions.IncrementAngle;
 import lsystem.actions.IncrementThickness;
 import lsystem.actions.MoveForward;
+import lsystem.actions.OpenPolygon;
 import lsystem.actions.PopDirection;
 import lsystem.actions.PopPosition;
 import lsystem.actions.PushDirection;
@@ -45,6 +48,9 @@ public class Parser
 		KEYWORDS.add("SWAP");
 		KEYWORDS.add("INCTHICKNESS");
 		KEYWORDS.add("SCLTHICK");
+		KEYWORDS.add("OPENPOLY");
+		KEYWORDS.add("CLOSEPOLY");
+		KEYWORDS.add("ADDPOINT");
 	}
 	
 	private LexicalAnalyzer lexer;
@@ -236,13 +242,29 @@ public class Parser
 			return new IncrementThickness((float) parseNum());
 		case "SCLTHICK":
 			return new ScaleThickness((float) parseNum());
+		case "OPENPOLY":
+			return new OpenPolygon();
+		case "CLOSEPOLY":
+			return new ClosePolygon();
+		case "ADDPOINT":
+			return new AddPoint();
 		}
 		throw new Error("Error, invalid action keyword at '" + t.lexeme + "', expected a valid action keyword.");
 	}
 	
 	private double parseNum()
 	{
-		Token t = lexer.expect(TokenType.NUM);
+		
+		Token t = lexer.getToken();
+		if(t.lexeme.length() > 0 && t.lexeme.charAt(0) == '-')
+		{
+			
+		}
+		else if(t.type != TokenType.NUM)
+		{
+			lexer.ungetToken(t);
+			t = lexer.expect(TokenType.NUM);
+		}
 		return Double.valueOf(t.lexeme);
 	}
 	
