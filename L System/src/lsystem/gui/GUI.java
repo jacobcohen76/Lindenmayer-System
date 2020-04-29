@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
@@ -49,6 +50,11 @@ public class GUI extends javax.swing.JFrame {
     */
    public GUI() {
        initComponents();
+   }
+   
+   public void loadIcon()
+   {
+	   setIconImage((new ImageIcon("resources\\icon.png")).getImage());
    }
    
    private static String actionsHelpString = 
@@ -273,8 +279,11 @@ public class GUI extends javax.swing.JFrame {
        BorderLayout actionsHelpFrameLayout = new BorderLayout();
        actionsHelpFrame.getContentPane().setLayout(actionsHelpFrameLayout);
        
-       actionsHelpFrame.getContentPane().add(actionsHelpArea, BorderLayout.CENTER);
+       
+       
+       actionsHelpFrame.getContentPane().add(actionsHelp, BorderLayout.CENTER);
        actionsHelpFrame.setResizable(true);
+       actionsHelpFrame.pack();
 
        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
        setResizable(true);
@@ -663,6 +672,7 @@ public class GUI extends javax.swing.JFrame {
        pack();
        actionsHelpFrame.setLocationRelativeTo(null);
        this.setLocationRelativeTo(null);
+       loadIcon();
    }// </editor-fold>          
                       
 

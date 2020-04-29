@@ -63,12 +63,12 @@ public class ConiferousPythagoreanTree
 		origin = new Point(0.0 - width / 2.0, 0.0);
 		String constants =
 				"F (MVFWD WIDTH, DRAWLINE), H (MVFWD HEIGHT, DRAWLINE),\r\n" + 
-						"+90 (RCCW 90), -90 (RCW 90),\r\n" + 
-						"+a (RCCW ANGLE_A), +b (RCCW ANGLE_B),\r\n" + 
-						"-a (RCW ANGLE_A), -b (RCW ANGLE_B),\r\n" + 
-						"[ (PUSHPOS, PUSHDIR), ] (POPPOS, POPDIR),\r\n" + 
-						"> (SCALE DOWNSCALE_A, SCLTHICK THICKDOWNA), < (SCALE UPSCALE_A, SCLTHICK THICKUPA),\r\n" + 
-						"} (SCALE DOWNSCALE_B, SCLTHICK THICKDOWNB), { (SCALE UPSCALE_B, SCLTHICK THICKUPB)";
+				"+90 (RCCW 90), -90 (RCW 90),\r\n" + 
+				"+a (RCCW ANGLE_A), +b (RCCW ANGLE_B),\r\n" + 
+				"-a (RCW ANGLE_A), -b (RCW ANGLE_B),\r\n" + 
+				"[ (PUSHPOS, PUSHDIR), ] (POPPOS, POPDIR),\r\n" + 
+				"> (SCALE DOWNSCALE_A, SCLTHICK THICKDOWNA), < (SCALE UPSCALE_A, SCLTHICK THICKUPA),\r\n" + 
+				"} (SCALE DOWNSCALE_B, SCLTHICK THICKDOWNB), { (SCALE UPSCALE_B, SCLTHICK THICKUPB)";
 		
 		constants = constants.replace("WIDTH", String.valueOf(width));
 		constants = constants.replace("HEIGHT", String.valueOf(height));
