@@ -39,7 +39,7 @@ public class StackPanel<T> extends JPanel
 	
 	public void add(T element)
 	{
-		dataStack.add(element);		
+		dataStack.add(element);	
 		repaint();
 	}
 	

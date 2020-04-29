@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +55,8 @@ public class GUI extends javax.swing.JFrame {
    
    public void loadIcon()
    {
-	   setIconImage((new ImageIcon("resources\\icon.png")).getImage());
+//	   String path = GUI.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+	   setIconImage((new ImageIcon(getClass().getClassLoader().getResource("icon.png"))).getImage());
    }
    
    private static String actionsHelpString = 
@@ -133,11 +135,42 @@ public class GUI extends javax.swing.JFrame {
        menu.add(item);
    }
    
-   private void loadFromPresetsResource()
+   public String getRoot()
    {
-	   File f = new File("resources\\presets");
-	   addPresets(Arrays.asList(f.listFiles()), presetsMenu);
+	   try {
+		return new File(GUI.class.getProtectionDomain().getCodeSource().getLocation()
+				    .toURI()).getPath();
+	} catch (URISyntaxException e) {
+		return "";
+	}
    }
+   
+//   private void loadFromPresetsResource()
+//   {
+////	   File f = new File("res\\presets");
+//	   File f = new File(getClass().getClassLoader().getResource("").getFile());
+//	   String path = GUI.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+//	   try {
+//		String decodedPath = URLDecoder.decode(path, "UTF-8");
+//		System.out.println(decodedPath);
+//	} catch (UnsupportedEncodingException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	}
+//	   System.exit(0);
+////	   System.out.println(path);
+////	   System.out.println(f);
+////	   try
+////	   {
+////		   System.out.println(Arrays.asList(f.listFiles()));
+////	   }
+////	   catch(Exception ex)
+////	   {
+////		   ex.printStackTrace();
+////	   }
+////	   System.exit(0);
+////	   addPresets(Arrays.asList(f.listFiles()), presetsMenu);
+//   }
    
    public void addPresets(List<File> files, JMenu base)
    {
@@ -201,7 +234,7 @@ public class GUI extends javax.swing.JFrame {
     */
    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
    @SuppressWarnings("deprecation")
-   private void initComponents() {
+   private void initComponents() {	   
        grammarPopupFrame = new javax.swing.JFrame();
        jTextArea1 = new javax.swing.JTextArea();
        actionsHelpFrame = new javax.swing.JFrame();
@@ -408,7 +441,7 @@ public class GUI extends javax.swing.JFrame {
        presetsMenu.setText("Load Presets");
        
        //TODO
-       loadFromPresetsResource();
+//       loadFromPresetsResource();
        
        plantsMenu.setText("Plants");
        presetsMenu.add(plantsMenu);

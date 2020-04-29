@@ -167,6 +167,7 @@ public class AnimationFrame extends JFrame
 			break;
 		case "lsystem.actions.DrawLine":
 			animationPanel.drawLine(getActionSpeed());
+			break;
 		case "lsystem.actions.PopDirection":
 			stackPanels.popDirection();
 			animationPanel.rotateTo(system.direction, getActionSpeed());
