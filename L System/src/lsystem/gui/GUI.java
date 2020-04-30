@@ -7,7 +7,6 @@ package lsystem.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -59,69 +58,185 @@ public class GUI extends javax.swing.JFrame {
 	   setIconImage((new ImageIcon(getClass().getClassLoader().getResource("icon.png"))).getImage());
    }
    
-   private static String actionsHelpString = 
-		   "INSTRUCTIONS\r\n" + 
+   private static String actionsHelpString =
+		   "INTRODUCTION\r\n" + 
+		   "	\r\n" + 
+		   "	Programming languages were created to be an abstraction from machine code to a higher level that is\r\n" + 
+		   "	easier for humans to understand and modify. This L-System Compiler is no different.\r\n" + 
+		   "	\r\n" + 
+		   "	To create an L-System you will need\r\n" + 
+		   "		-axiom - string of symbols\r\n" + 
+		   "		-constants - a set of symbols\r\n" + 
+		   "		-variables - a set of symbols\r\n" + 
+		   "		-rules - the mapping of each variable to a replacement string\r\n" + 
+		   "	\r\n" + 
+		   "	The L-System Compiler will take in some number n, and from the axiom string will replace each\r\n" + 
+		   "	variable with its replacement string.\r\n" + 
+		   "	\r\n" + 
+		   "	Each symbol is mapped to a list of instructions, so once the replacement string at generation n\r\n" + 
+		   "	is found, we can then iterate through the replacement string and perform these instructions in order\r\n" + 
+		   "	to generate an image.\r\n" + 
+		   "	\r\n" + 
+		   "	for example\r\n" + 
+		   "		\r\n" + 
+		   "		axiom\r\n" + 
+		   "		   y\r\n" + 
+		   "		\r\n" + 
+		   "		constants\r\n" + 
+		   "		   F\r\n" + 
+		   "		\r\n" + 
+		   "		variables\r\n" + 
+		   "		   x, y\r\n" + 
+		   "		\r\n" + 
+		   "		rules \r\n" + 
+		   "		   x = FFx\r\n" + 
+		   "		   y = xy\r\n" + 
+		   "		\r\n" + 
+		   "	if you were to set n = 4, then\r\n" + 
+		   "\r\n" + 
+		   "		n = 0, y\r\n" + 
+		   "		n = 1, xy\r\n" + 
+		   "		n = 2, FFxxy\r\n" + 
+		   "		n = 3, FFFFxFFxxy\r\n" + 
+		   "		n = 4, FFFFFFxFFFFxFFxxy\r\n" + 
+		   "	\r\n" + 
+		   "	what the image produced by the replacement string \"FFFFFFxFFFFxFFxxy\" will look like is up to you\r\n" + 
+		   "	to decide by defining what the instruction mapping for each symbol will be.\r\n\r\n" +
+		   "INSTRUCTION OVERVIEW\r\n" + 
+		   "	\r\n" + 
+		   "	Instructions are mapped to symbols when symbols are defined, the syntax for this is\r\n" + 
+		   "\r\n" + 
+		   "		SYMBOL(INSTRUCTION PARAMETERS)\r\n" + 
+		   "	\r\n" + 
+		   "	You can chain instructions together, the syntax for this is\r\n" + 
+		   "	\r\n" + 
+		   "		SYMBOL(INSTRUCTION PARAMETERS, INSTRUCTION PARAMETERS, ... , INSTRUCTION PARAMETERS)\r\n" + 
+		   "\r\n" +
+		   "INSTRUCTION DICTIONARY\r\n" + 
 		   "\r\n" + 
 		   "	KEYWORD			PARAMETER(S)\r\n" + 
 		   "	\r\n" + 
-		   "	RCCW			angle	: NUM, (optional) % randomization : PERCENTAGE\r\n" + 
-		   "	Rotates the current angle of the turtle graphics by some angle counter-clockwise, if the input parameter is\r\n" + 
-		   "	in radians or degrees is determined by if the program is currently in radian mode, or degree mode. This can\r\n" + 
-		   "	be modified by selecting an option from the 'Angle Type' menu label. If a percentage is included after the\r\n" + 
-		   "	angle parameter every time this action is performed, the angle that the turtle will rotate will vary by\r\n" + 
-		   "	the specifed amount.\r\n" + 
+		   "	RCCW			angle	: NUM		(optional) % randomization : PERCENTAGE\r\n" +
+		   "\r\n" + 
+		   "	   Rotates the current angle of the turtle graphics by some angle counter-clockwise, if the input parameter is\r\n" + 
+		   "	   in radians or degrees is determined by if the program is currently in radian mode, or degree mode. This can\r\n" + 
+		   "	   be modified by selecting an option from the 'Angle Type' menu label. If a percentage is included after the\r\n" + 
+		   "	   angle parameter every time this action is performed, the angle that the turtle will rotate will vary by\r\n" + 
+		   "	   the specifed amount.\r\n" + 
+		   "\r\n" + 
+		   "	   for example\r\n\r\n" +
+		   "              if you want the symbol '+' to rotate counter clockwise 90 degrees" +
+		   "\r\n\r\n" +
+		   "                 +(RCCW 1.5707)  //if the parser is in radian mode\r\n" + 
+		   "                 +(RCCW 90)      //if the parser is in angle mode\r\n" +
+		   "\r\n" +
+		   "              to randomize how this rotation by 10%, modify the above statements to the following\r\n\r\n" +
+		   "                 +(RCCW 1.5707 10%)\r\n" +
+		   "                 +(RCCW 90 10%)\r\n" +
 		   "	\r\n" + 
-		   "	RCW			angle	: NUM, (optional) % randomization : PERCENTAGE\r\n" + 
-		   "	Rotates the current angle of the turtle graphics by some angle clockwise, if the input parameter is\r\n" + 
-		   "	in radians or degrees is determined by if the program is currently in radian mode, or degree mode. This can\r\n" + 
-		   "	be modified by selecting an option from the 'Angle Type' menu label. If a percentage is included after the\r\n" + 
-		   "	angle parameter every time this action is performed, the angle that the turtle will rotate will vary by\r\n" + 
-		   "	the specifed amount.\r\n" + 
+		   "	RCW			angle	: NUM		(optional) % randomization : PERCENTAGE\r\n" +
+		   "\r\n" + 
+		   "	   Rotates the current angle of the turtle graphics by some angle clockwise, if the input parameter is\r\n" + 
+		   "	   in radians or degrees is determined by if the program is currently in radian mode, or degree mode. This can\r\n" + 
+		   "	   be modified by selecting an option from the 'Angle Type' menu label. If a percentage is included after the\r\n" + 
+		   "	   angle parameter every time this action is performed, the angle that the turtle will rotate will vary by\r\n" + 
+		   "	   the specifed amount.\r\n" + 
 		   "	\r\n" + 
-		   "	MVFWD			amount	: NUM, (optional) % randomization : PERCENTAGE\r\n" + 
-		   "	Moves the position of the turtle in the turtle graphics forwards by the amount of the input parameter.\r\n" + 
-		   "	If a percentage is included after the amount parameter every time this action is performed, the distance\r\n" + 
-		   "	the turtle will move will vary by the specifed amount.\r\n" + 
+		   "	   for example\r\n\r\n" +
+		   "              if you want the symbol '-' to rotate clockwise 90 degrees" +
+		   "\r\n\r\n" +
+		   "                 -(RCW 1.5707)  //if the parser is in radian mode\r\n" + 
+		   "                 -(RCW 90)      //if the parser is in angle mode\r\n" +
+		   "\r\n" +
+		   "              to randomize how this rotation by 10%, modify the above statements to the following\r\n\r\n" +
+		   "                 -(RCW 1.5707 10%)\r\n" +
+		   "                 -(RCW 90 10%)\r\n" +
 		   "	\r\n" + 
-		   "	PUSHPOS			NONE\r\n" + 
-		   "	Pushes the current position of the turtle to the position stack.\r\n" + 
+		   "	MVFWD			amount	: NUM		(optional) % randomization : PERCENTAGE\r\n" +
+		   "\r\n" + 
+		   "	   Moves the position of the turtle in the turtle graphics forwards by the amount of the input parameter.\r\n" + 
+		   "	   If a percentage is included after the amount parameter every time this action is performed, the distance\r\n" + 
+		   "	   the turtle will move will vary by the specifed amount.\r\n" + 
 		   "	\r\n" + 
-		   "	PUSHDIR			NONE\r\n" + 
-		   "	Pushes the current direction of the turtle in to the direction stack.\r\n" + 
+		   "	   for example\r\n\r\n" +
+		   "              if you want the symbol 'F' to move forward 10.52 pixels" +
+		   "\r\n\r\n" +
+		   "                 F(MVFWD 10.52)\r\n" + 
+		   "\r\n" +
+		   "              to randomize how many pixels we will move forward 10%, modify the above statements to the following\r\n\r\n" +
+		   "                 F(MVFWD 10.52 10%)\r\n" + 
 		   "	\r\n" + 
-		   "	POPPOS			NONE\r\n" + 
-		   "	Pops a position from the position stack, and moves the turtle there.\r\n" + 
+		   "	PUSHPOS			NONE\r\n" +
+		   "\r\n" + 
+		   "	   Pushes the current position of the turtle to the position stack.\r\n" + 
 		   "	\r\n" + 
-		   "	POPDIR			NONE\r\n" + 
-		   "	Pops a direction from the direction stack, and rotates the direction of the turtle to it.\r\n" + 
+		   "	   for example\r\n\r\n" +
+		   "              if you want the symbol '[' to push the current position on to the stack" +
+		   "\r\n\r\n" +
+		   "                 [(PUSHPOS)\r\n" + 
 		   "	\r\n" + 
-		   "	INCANGLE		amount : NUM\r\n" + 
-		   "	Each time this instruction is called, all other calls of the RCCW and RCW commands will increase by\r\n" + 
-		   "	the specified amount.\r\n" + 
+		   "	PUSHDIR			NONE\r\n" +
+		   "\r\n" + 
+		   "	   Pushes the current direction of the turtle in to the direction stack.\r\n" + 
 		   "	\r\n" + 
-		   "	DECANGLE		amount : NUM\r\n" + 
-		   "	Each time this instruction is called, all other calls of the RCCW and RCW commands will decrease by\r\n" + 
-		   "	the specified amount. This is actually pointless because you can input negative numbers to INCANGLE, so\r\n" + 
-		   "	I don't know why you would every use this. I should probably remove it. Edit: it turns out\r\n" + 
-		   "	that you cannot use negative numbers as parameters, I should probably update the parser to allow for this behavior.\r\n" + 
+		   "	POPPOS			NONE\r\n" +
+		   "\r\n" + 
+		   "	   Pops a position from the position stack, and moves the turtle there.\r\n" + 
 		   "	\r\n" + 
-		   "	SCALE			scale_factor : NUM\r\n" + 
-		   "	Multipies the amount by which all other calls of the MVFWD command will move by a factor.\r\n" + 
-		   "	This command is particularly useful for generating equivalent fractals in the IFS format because it\r\n" + 
-		   "	allows for more variations of ratios between the drawn lines than provided in traditional L-Systems.\r\n" + 
+		   "	POPDIR			NONE\r\n" +
+		   "\r\n" + 
+		   "	   Pops a direction from the direction stack, and rotates the direction of the turtle to it.\r\n" + 
 		   "	\r\n" + 
-		   "	SWAP			NONE\r\n" + 
-		   "	Multiplies all of the angles in the RCCW and RCW commands by -1. This effectively swaps the direction\r\n" + 
-		   "	clockwise and counter-clockwise rotations. To undo this effect, simply add another Symbol that\r\n" + 
-		   "	calls this instruction when you want this behavior to stop.\r\n" + 
+		   "	INCANGLE		amount : NUM\r\n" +
+		   "\r\n" + 
+		   "	   Each time this instruction is called, all other calls of the RCCW and RCW commands will increase by\r\n" + 
+		   "	   the specified amount.\r\n" + 
 		   "	\r\n" + 
-		   "	INCTHICKNESS		amount : NUM\r\n" + 
-		   "	Each time this instruction is called, the thickness of lines drawn will increase by the specifed amount.\r\n" + 
-		   "	To decrease the thickness of lines, simply make the amount negative.\r\n" + 
+		   "	DECANGLE		amount : NUM\r\n" +
+		   "\r\n" + 
+		   "	   Each time this instruction is called, all other calls of the RCCW and RCW commands will decrease by\r\n" + 
+		   "	   the specified amount. This is actually pointless because you can input negative numbers to INCANGLE, so\r\n" + 
+		   "	   I don't know why you would every use this. I should probably remove it.\r\n"
+		   + "\r\n	   Edit 1: it turns out that you cannot use negative numbers as parameters, I should probably update the\r\n"
+		   + "	   parser to allow for this behavior.\r\n"
+		   + "\r\n	   Edit 2: You can now use negative numbers in the parsers so it is officially useless. This instruction has been\r\n"
+		   + "	   left in for compatibility with the 0 times I have used it in L-System Rulesets before release.\r\n" +
 		   "	\r\n" + 
-		   "	SCLTHICK		amount : NUM\r\n" + 
-		   "	Multiplies the current thickness of lines drawn by a factor.  To remove this effect, simply perform \r\n" + 
-		   "	this instruction with a parameter equal to (1 / amount).";
+		   "	SCALE			scale_factor : NUM\r\n" +
+		   "\r\n" + 
+		   "	   Multipies the amount by which all other calls of the MVFWD command will move by a factor.\r\n" + 
+		   "	   This command is particularly useful for generating equivalent fractals in the IFS format because it\r\n" + 
+		   "	   allows for more variations of ratios between the drawn lines than provided in traditional L-Systems.\r\n" + 
+		   "	\r\n" + 
+		   "	SWAP			NONE\r\n" +
+		   "\r\n" + 
+		   "	   Multiplies all of the angles in the RCCW and RCW commands by -1. This effectively swaps the direction\r\n" + 
+		   "	   clockwise and counter-clockwise rotations. To undo this effect, simply add another Symbol that\r\n" + 
+		   "	   calls this instruction when you want this behavior to stop.\r\n" + 
+		   "	\r\n" + 
+		   "	INCTHICKNESS		amount : NUM\r\n" +
+		   "\r\n" + 
+		   "	   Each time this instruction is called, the thickness of lines drawn will increase by the specifed amount.\r\n" + 
+		   "	   To decrease the thickness of lines, simply make the amount negative.\r\n" + 
+		   "	\r\n" + 
+		   "	SCLTHICK		amount : NUM\r\n" +
+		   "\r\n" + 
+		   "	   Multiplies the current thickness of lines drawn by a factor.  To remove this effect, simply perform \r\n" + 
+		   "	   this instruction with a parameter equal to (1 / amount).\r\n" +
+		   "	\r\n" +
+		   "	OPENPOLY		NONE\r\n" +
+		   "\r\n" + 
+		   "	   Opens a new polygon. Puts in on the polygon stack and all points added with the ADDPOINT command are put\r\n" +
+		   "	   into the polygon that is currently on top of the polygon stack.\r\n" +
+		   "	\r\n" +
+		   "	CLOSEPOLY		NONE\r\n" +
+		   "\r\n" + 
+		   "	   Closes the polygon on the top of the polygon stack and removes it from the polygon stack. This polygon\r\n" +
+		   "	   is now considered finalized and added to the list of finalized polygons.\r\n" +
+		   "	\r\n" +
+		   "	ADDPOINT		NONE\r\n" +
+		   "\r\n" + 
+		   "	   Adds the current position as a point in the polygon that is currently on top of the polygon stack.\r\n";
    
    private void addItem(JMenu menu, Preset preset)
    {
@@ -220,6 +335,7 @@ public class GUI extends javax.swing.JFrame {
    
    private JMenuItem importItem;
    private JMenuItem exportItem;
+   private JScrollPane actionsHelp;
    
    private JRadioButtonMenuItem biggestGenerationsFirst;
    private JRadioButtonMenuItem degreeMode;
@@ -298,11 +414,9 @@ public class GUI extends javax.swing.JFrame {
        );
 
        actionsHelpArea.setEditable(false);
-       actionsHelpArea.setColumns(20);
        actionsHelpArea.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
-       actionsHelpArea.setRows(5);
        
-       JScrollPane actionsHelp = new JScrollPane();
+       actionsHelp = new JScrollPane();
        actionsHelp.setViewportView(actionsHelpArea);
        
        //TODO
@@ -316,7 +430,6 @@ public class GUI extends javax.swing.JFrame {
        
        actionsHelpFrame.getContentPane().add(actionsHelp, BorderLayout.CENTER);
        actionsHelpFrame.setResizable(true);
-       actionsHelpFrame.pack();
 
        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
        setResizable(true);
@@ -511,7 +624,6 @@ public class GUI extends javax.swing.JFrame {
            }
        });
        helpMenu.add(displayActionsMenuItem);
-
        mainMenu.add(helpMenu);
 
        colorsMenu.setText("Colors");
@@ -703,7 +815,6 @@ public class GUI extends javax.swing.JFrame {
        );
 
        pack();
-       actionsHelpFrame.setLocationRelativeTo(null);
        this.setLocationRelativeTo(null);
        loadIcon();
    }// </editor-fold>          
@@ -1074,9 +1185,14 @@ public class GUI extends javax.swing.JFrame {
     }                                            
 
 
-    private void displayActionsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {                                                       
+    private void displayActionsMenuItemActionPerformed(java.awt.event.ActionEvent evt) { 
+        actionsHelp.setSize(getSize());
+        actionsHelp.setPreferredSize(getSize());
+        actionsHelp.setMinimumSize(getSize());
+        actionsHelp.setMaximumSize(getSize());
+        actionsHelpFrame.pack();
+        actionsHelpFrame.setLocationRelativeTo(this);
         actionsHelpFrame.setVisible(true);
-        actionsHelpFrame.setPreferredSize(new Dimension(500, 500));
     }
     
     private void animateButtonActionPerformed(java.awt.event.ActionEvent evt) {                                              
